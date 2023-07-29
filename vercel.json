@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "buildCommand": "flask db init && flask db migrate && flask db upgrade",
+    "buildCommand": "flask db init & flask db migrate & flask db upgrade",
     "builds": [
         {
             "src": "index.py",
