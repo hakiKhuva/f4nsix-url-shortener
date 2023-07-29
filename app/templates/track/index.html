@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles_t.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js" integrity="sha512-CMF3tQtjOoOJoOKlsS7/2loJlkyctwzSoDK/S40iAB+MqWSaf50uObGQSk5Ny/gfRhRCjNLvoxuCvdnERU4WGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block body %}
+<div>
+    <h2 class="h1">Track ID</h2>
+    <form action="{{ url_for('Track.index') }}" method="get" class="form1">
+        <div>
+            <label for="tracking-id">Tracking ID</label>
+            <input type="text" name="id" id="tracking-id" placeholder="Enter Tracking ID" value="{{request.args.get('id','')}}">
+        </div>
+        <button type="submit">Track</button>
+    </form>
+</div>
+{% if tracking_data %}
+<div class="tracking-data">
+    <div style="text-align: right;">
+        <strong><em>*Date and Time in UTC.</em></strong>
+    </div>
+    <div class="whole-dashboard" style="overflow: auto;">
+        <table class="table1">
+            <tr>
+                <td>Shorten link</td>
+                <td><a href="{{tracking_data['shorten-link']}}" target="_blank">{{tracking_data['shorten-link']}}</a></td>
+            </tr>
+            <tr>
+                <td>Destination</td>
+                <td style="word-break: break-all;"><a href="{{tracking_data['link-destination']}}" target="_blank">{{tracking_data['link-destination']}}</a></td>
+            </tr>
+            <tr>
+                <td>Created</td>
+                <td>{{tracking_data['link-created-date'].strftime('%Y-%m-%d')}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="s-card-cols">
+        <div class="s-card">
+            <span>Total clicks</span>
+            <span>{{format_number(tracking_data["clicks"])}}</span>
+        </div>
+        <div class="s-card">
+            <span>Top country</span>
+            <span>
+                {% if tracking_data["clicks"] > 0 %}
+                {{tracking_data["countries"][0][0]}}
+                {% else %}
+                Not enough data!
+                {% endif %}
+            </span>
+        </div>
+        <div class="s-card">
+            <span>Most used browser</span>
+            <span>
+                {% if tracking_data["clicks"] > 0 %}
+                {{tracking_data["browsers"][0][0]}}
+                {% else %}
+                Not enough data!
+                {% endif %}
+            </span>
+        </div>
+        <div class="s-card">
+            <span>Most used device</span>
+            <span>
+                {% if tracking_data["clicks"] > 0 %}
+                {{tracking_data["devices"][0][0]}}
+                {% else %}
+                Not enough data!
+                {% endif %}
+            </span>
+        </div>
+        <div class="s-card">
+            <span>Most used OS</span>
+            <span>
+                {% if tracking_data["clicks"] > 0 %}
+                {{tracking_data["operating-systems"][0][0]}}
+                {% else %}
+                Not enough data!
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <div class="whole-dashboard">
+        <div class="grid-2">
+            {% for item_g in grid_data_to_display %}
+            <div class="g-data">
+                <h3 class="heading">{{item_g.replace('_',' ').replace('-',' ').title()}}</h3>
+                {% if tracking_data[item_g] %}
+                <table>
+                    {% for c in tracking_data[item_g] %}
+                    <tr>
+                        <td>{{c[0]}}</td>
+                        <td>{{format_number(c[1])}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <small>*Top 10 results are shown</small>
+                {% else %}
+                <p>Not enough data to show</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="whole-board">
+            <h3 class="heading">Countries</h3>
+            {% if tracking_data["countries"] %}
+            <div id="countries-data-graph"></div>
+            <script>
+                fetch("{{ url_for('Track.image_for_shorten', tracking_id=tracking_id) }}")
+                .then(resp => resp.text())
+                .then(data => {
+                    const image = document.createElement("embed")
+                    image.src = data;
+                    image.id = "countries-data-graph"
+                    image.width = "100%"
+                    document.querySelector("#countries-data-graph").replaceWith(image)
+                })
+                .catch(err => {
+                    document.querySelector("#countries-data-graph").textContent = "Could not load the graph image, refresh the page and tryagain later."
+                })
+            </script>
+            <table class="table" style="max-width: 650px; margin: auto;">
+            {% for country in tracking_data['countries'] %}
+                <tr>
+                    <td>{{country[0]}}</td>
+                    <td>{{format_number(country[1])}}</td>
+                </tr>
+            {% endfor %}
+            </table>
+            {% else %}
+            <p>Not enough data to show</p>
+            {% endif %}
+        </div>
+
+        <div class="whole-board">
+            <h3 class="heading">Past 24 hours clicks</h3>
+            {% if tracking_data["clicks"] > 0 %}
+            <canvas id="datetime-link-clicks" style="width: 100%;"></canvas>
+            <script>
+                (()=>{
+                    const DATETIME_CLICKING_DATES = JSON.parse('{{(tracking_data["datetime-clicks"].keys()|list)[::-1]|tojson}}')
+                    const DATETIME_CLICKING_CLICKS = JSON.parse('{{(tracking_data["datetime-clicks"].values()|list)[::-1]|tojson}}')
+                    
+                    new Chart("datetime-link-clicks",{
+                        type: 'line',
+                        data: {
+                            labels: DATETIME_CLICKING_DATES,
+                            datasets: [{
+                                label: 'Clicks',
+                                fill: false,
+                                data: DATETIME_CLICKING_CLICKS,
+                            }],
+                        }
+                    })
+                })()
+            </script>
+            {% else %}
+            <p>Not enough data to show</p>
+            {% endif %}
+        </div>
+
+        <div class="whole-board">
+            <h3 class="heading">Last 7 days clicks</h3>
+            {% if tracking_data["clicks"] > 0 %}
+            <canvas id="last-seven-link-clicks" style="width: 100%;"></canvas>
+            <script>
+                (()=>{
+                    const LAST_SEVEN_CLICKING_DATES = JSON.parse('{{(tracking_data["last-seven-days-clicks"].keys()|list)[::-1]|tojson}}')
+                    const LAST_SEVEN_CLICKING_CLICKS = JSON.parse('{{(tracking_data["last-seven-days-clicks"].values()|list)[::-1]|tojson}}')
+                    
+                    new Chart("last-seven-link-clicks",{
+                        type: 'bar',
+                        data: {
+                            labels: LAST_SEVEN_CLICKING_DATES,
+                            datasets: [{
+                                label: 'Clicks',
+                                fill: false,
+                                data: LAST_SEVEN_CLICKING_CLICKS,
+                            }],
+                        }
+                    })
+                })()
+            </script>
+            {% else %}
+            <p>Not enough data to show</p>
+            {% endif %}
+        </div>
+
+
+    </div>
+</div>
+{% endif %}
+{% endblock %}

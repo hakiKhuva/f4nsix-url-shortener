@@ -1,0 +1,7 @@
+env/
+migrations/
+__pycache__/
+
+.env
+main.py
+.vercel

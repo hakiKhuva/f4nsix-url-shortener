@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .document-data {
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+        word-wrap: break-word;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="document-data">
+    {{render_data|safe}}
+</div>
+{% endblock %}

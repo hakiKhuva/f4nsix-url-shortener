@@ -1,0 +1,52 @@
+.carding {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.carding > .card,
+.carding > .card * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.carding > .card {
+    box-shadow: 0px 0px 1px 0px var(--carding-fg);
+    padding: 20px;
+    margin: 10px;
+    border-radius: 3px;
+}
+
+.carding > .card > .heading {
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+}
+
+.carding > .card > .value {
+    font-size: 17px;
+    display: block;
+    text-align: right;
+}
+
+.graphs {
+    margin: 20px 0px;
+}
+
+.graphs > .graph,
+.graphs > .graph * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.graphs > .graph {
+    border-radius: 5px;
+    box-shadow: 0px 0px 1px 0px var(--carding-fg);
+    padding: 15px;
+    margin: 15px 2px;
+}
+
+.graphs > .graph .heading {
+    text-align: center;
+    margin: 30px 0px;
+}

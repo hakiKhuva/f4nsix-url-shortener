@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if page_title %}
+    <title>{{page_title}}</title>
+    {% else %}
+    <title>{{app_name}} - Admin</title>
+    {% endif %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800;900&family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_styles.css') }}">
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header id="main">
+        <div class="max-container">
+            <a href="{{ url_for('Admin.index') }}">{{app_name}} - Admin</a>
+        </div>
+    </header>
+    <div class="max-container">
+        <nav>
+            {% if admin_login_status is true %}
+            <a href="{{ url_for('Admin.index') }}" class="{{ 'active' if request.endpoint == 'Admin.index'}}">Dashboard</a>
+            <a href="{{ url_for('Admin.links', page=1) }}" class="{{ 'active' if request.endpoint == 'Admin.links'}}">Links</a>
+            <a href="{{ url_for('Admin.settings') }}" class="{{ 'active' if request.endpoint == 'Admin.settings'}}">Settings</a>
+            <a href="{{ url_for('Admin.admin_sessions', page=1) }}" class="{{ 'active' if request.endpoint == 'Admin.admin_sessions'}}">Sessions</a>
+            <a href="{{ url_for('Admin.logout') }}">Logout</a>
+            {% else %}
+            <a href="{{url_for('Admin.login')}}" class="{{ 'active' if request.endpoint == 'Admin.login'}}">Login</a>
+            {% endif %}
+            <a href="{{url_for('Home.index')}}" class="{{ 'active' if request.endpoint == 'Home.index'}}">View website</a>
+        </nav>
+    </div>
+    <div id="to-notes">
+        {% with msgs = get_flashed_messages(with_categories=false) %}
+            {% for msg in msgs %}
+            <div>
+                <div class="max-container">
+                    <p>{{msg}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+    <div class="max-container">
+        {% block body %}{% endblock %}
+    </div>
+</body>
+</html>

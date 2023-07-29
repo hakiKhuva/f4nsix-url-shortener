@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{page_description}}">
+    <meta name="keywords" content="f4nsix, url-shortener, link, url, link-shortener, free, url traffic, link traffic, analyzer, link analyzer, traffic analyzer, url shorten, link shorten">
+    <title>{{page_title}}</title>
+
+    <meta name="og:title" property="og:title" content="{{page_title}}">
+    <meta name="og:description" property="og:description" content="{{page_description}}">
+    <meta name="og:url" property="og:url" content="{{request.url}}">
+    <meta name="og:image" property="og:image" content="{{request.url}}">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800;900&family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    {% if app_debug is not true %}
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "i6qd0wpobo");
+    </script>
+    {% endif %}
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header id="main">
+        <div class="max-container">
+            <a href="/" id="routing-anchor"><h1 style="font-size: inherit; padding: inherit; margin: inherit;">{{app_name}}</h1></a>
+        </div>
+    </header>
+    <div class="max-container">
+        <nav>
+            <a href="{{url_for('Home.index')}}" class="{{ 'active' if request.endpoint == 'Home.index'}}">Shorten URL</a>
+            <a href="{{url_for('Track.index')}}" class="{{ 'active' if request.endpoint == 'Track.index'}}">Track ID</a>
+        </nav>
+    </div>
+    <div id="to-notes">
+    {% with msgs = get_flashed_messages(with_categories=false) %}
+        {% for msg in msgs %}
+        <div>
+            <div class="max-container">
+                <p>{{msg}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endwith %}
+    </div>
+    <section id="main-container" class="max-container">
+        {% block body %}{% endblock %}
+    </section>
+    <footer>
+        <div>
+            <p>&copy; 2023 {{app_name}} - {{app_short_description}}</p>
+        </div>
+        <div class="f">
+            <a href="{{ url_for('Legal.terms_of_service') }}">Terms of service</a>
+            <a href="{{ url_for('Legal.privacy_policy') }}">Privacy policy</a>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+
+{% block body %}
+<form action="{{ url_for('Admin.login') }}" method="post" class="form1">
+    <h2>Log in</h2>
+    {{form.hidden_tag()}}
+    <div class="label">
+        {{form.email_address.label()}}
+        {{form.email_address(placeholder="Email address")}}
+    </div>
+    <div class="label">
+        {{form.password.label()}}
+        {{form.password(placeholder="Password")}}
+    </div>
+    <button type="submit">Login</button>
+</form>
+{% endblock %}

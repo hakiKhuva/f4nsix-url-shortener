@@ -1,0 +1,283 @@
+:root {
+    --bg: #eee;
+    --fg: #056a6d;
+    --carding-bg: #fff;
+    --carding-fg: #111;
+    --fg1: #000;
+    --font: 'Jost', sans-serif;
+    --font2: 'Schibsted Grotesk', sans-serif;
+    --max-w: 1280px;
+}
+
+.max-container {
+    max-width: var(--max-w);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
+body, body * {
+    background-color: var(--bg);
+    color: var(--fg1);
+    font-family: var(--font);
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+header#main {
+    padding: 20px;
+    font-size: 23.5px;
+}
+
+header#main , header#main * {
+    background-color: var(--fg) !important;
+    color: var(--bg);
+}
+
+header#main a#routing-anchor {
+    display: block;
+    font-weight: bold;
+}
+
+header#main > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px solid var(--fg);
+    overflow: auto;
+}
+
+nav a {
+    font-size: 18px;
+    padding: 12px 20px;
+    margin: 0px 10px;
+}
+
+nav a.active {
+    background-color: var(--fg);
+    color: var(--bg);
+}
+
+nav a:first-child {
+    margin-left: 0px;
+}
+nav a:last-child {
+    margin-right: 0px;
+}
+
+#to-notes {
+    margin: 20px 0px;
+}
+
+#to-notes > div {
+    padding: 18px;
+    margin: 5px 0px;
+    border-bottom: 2px solid var(--fg1);
+}
+
+#to-notes > div:first-child {
+    border-top: 2px solid var(--fg1);
+}
+
+#to-notes > div p {
+    padding: 0px;
+    margin: 0px;
+}
+
+#to-notes > div,
+#to-notes > div * {
+    font-size: 16.5px;
+    font-family: var(--font2);
+    font-weight: bold;
+}
+
+#main-container {
+    padding: 20px;
+    min-height: calc( 100vh - 40px );
+}
+
+.h1 {
+    font-size: 35px;
+    margin: 10px 0px;
+}
+
+.form1 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.form1 > div {
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
+
+.form1 > div > label {
+    font-size: 16px;
+    display: block;
+}
+
+.form1 > div > input {
+    padding: 12.5px 15px;
+    border-radius: 2px;
+    border: 2px solid var(--fg1);
+    font-size: 17px;
+    font-family: var(--font);
+}
+
+.form1 > div > input:focus {
+    outline: none;
+    border-color: var(--fg);
+}
+
+.form1 button[type="submit"] {
+    cursor: pointer;
+    padding: 10px 25px;
+    font-size: 15px;
+    width: max-content;
+    border-radius: 3px;
+    background-color: var(--fg);
+    color: var(--bg);
+    font-weight: bold;
+    border: 0px;
+    margin: 5px;
+}
+
+.form2 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.form2 > div {
+    display: grid;
+    grid-template-columns: 180px calc(100% - 180px - 80px) 80px;
+    margin: 10px 0px;
+    border: 2px solid #455;
+    border-radius: 5px;
+}
+
+.form2 > div > label {
+    background-color: #455;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    padding: 13px;
+    border: 0px;
+    border-radius: 3px 0px 0px 3px;
+}
+
+.form2 > div > input {
+    padding: 13px;
+    border: 0px;
+    font-size: 17px;
+    font-family: var(--font2);
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.form2 > div button[type="button"] {
+    background-color: var(--fg);
+    color: var(--bg);
+    font-weight: bold;
+    border-radius: 0px 3px 3px 0px;
+    border: 1px solid var(--fg);
+    cursor: pointer;
+}
+
+.table1 {
+    width: 100%;
+    margin: 10px 0px;
+}
+
+.table1,
+.table1 tr,
+.table1 td,
+.table1 th {
+    border: 1px solid var(--fg1);
+    border-collapse: collapse;
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.table1 td * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.table1 th {
+    font-size: 18px;
+}
+
+.table1 td {
+    font-size: 16px;
+}
+
+.table1 td,
+.table1 th {
+    padding: 15px;
+    text-align: left;
+}
+
+footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    text-align: center;
+    padding: 15px;
+    bottom: 0;
+    position: relative;
+}
+
+footer,
+footer *{
+    background-color: var(--fg);
+    color: var(--bg);
+}
+
+footer p {
+    font-size: 17.5px;
+}
+
+footer .f {
+    display: flex;
+}
+
+footer .f > a {
+    margin: 10px 15px;
+}
+
+@media (max-width:650px){
+    .form2 > div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form2 > div > label {
+        border-radius: 3px 3px 0px 0px;
+    }
+
+    .form2 > div button[type="button"] {
+        border-radius: 0px 0px 3px 3px;
+    }
+}

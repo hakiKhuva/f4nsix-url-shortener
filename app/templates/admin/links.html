@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+
+{% block body %}
+<h2>All links</h2>
+<div>
+    <table class="table1">
+        <tbody>
+            <tr>
+                <th width="33.33%">Current page</th>
+                <th width="33.33%">Pages</th>
+                <th width="33.33%">Jump to</th>
+            </tr>
+            <tr>
+                <td>{{paginate.page}}</td>
+                <td>{{paginate.pages}}</td>
+                <td>
+                    <select onchange="window.location = this.value">
+                        {% for page in paginate.iter_pages() %}
+                        {% if paginate.page == page %}
+                        <option value="{{url_for('Admin.links',page=page)}}" selected>{{page}}</option>
+                        {% else %}
+                        <option value="{{url_for('Admin.links',page=page)}}">{{page}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="overflow: auto;">
+    <table class="table1">
+        <tbody>
+            <tr>
+                <th>Shorten code</th>
+                <th>Tracking ID</th>
+                <th>Destination</th>
+                <th>Created date</th>
+            </tr>
+            {% for link in paginate %}
+            <tr>
+                <td>{{link.code}}</td>
+                <td>{{link.tracking_id}}</td>
+                <td>{{link.destination}}</td>
+                <td>{{link.created_date.strftime('%d-%m-%Y %H:%M UTC')}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+</div>
+{% endblock %}

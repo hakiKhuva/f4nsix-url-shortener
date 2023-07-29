@@ -1,0 +1,67 @@
+{% extends "admin/base.html" %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js" integrity="sha512-CMF3tQtjOoOJoOKlsS7/2loJlkyctwzSoDK/S40iAB+MqWSaf50uObGQSk5Ny/gfRhRCjNLvoxuCvdnERU4WGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block body %}
+<h2>Dashboard</h2>
+<h3>Hello, {{admin_name}}</h3>
+<div class="carding">
+    {% for card in data["cards"].keys() %}
+    <div class="card">
+        <span class="heading">{{card}}</span>
+        <span class="value">{{format_number(data["cards"][card])}}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="graphs">
+    {% for graph in data["graphs"] %}
+    <div class="graph">
+        <h2 class="heading">{{graph.replace('_',' ').replace('-',' ').title()}}</h2>
+        <canvas id="{{graph}}"></canvas>
+        <script>
+            new Chart("{{graph}}",{
+                type: "line",
+                data: {
+                    labels: JSON.parse('{{((data["graphs"][graph].keys())|list)[::-1]|tojson}}'),
+                    datasets: [{
+                        label: "{{graph.replace('_',' ').replace('-',' ').upper().removesuffix('DATA')}}",
+                        fill: false,
+                        data: JSON.parse('{{((data["graphs"][graph].values())|list)[::-1]|tojson}}'),
+                        tension: .15
+                    }]
+                }
+            })
+        </script>
+    </div>
+    {% endfor %}
+    <div class="graph">
+        <h3 class="heading">Link transactions countries</h3>
+        <div id="countries-data-graph"></div>
+        <script>
+            fetch("{{ url_for('Admin.worldmap_image') }}")
+            .then(resp => resp.text())
+            .then(data => {
+                const image = document.createElement("embed")
+                image.src = data;
+                image.id = "countries-data-graph"
+                image.width = "100%"
+                document.querySelector("#countries-data-graph").replaceWith(image)
+            })
+            .catch(err => {
+                document.querySelector("#countries-data-graph").textContent = "Could not load the graph image, refresh the page and tryagain later."
+            })
+        </script>
+        <table class="table1" style="max-width: 650px; margin: auto;">
+        {% for country in data['table-data']['countries'] %}
+            <tr>
+                <td>{{country[0]}}</td>
+                <td>{{format_number(country[1])}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
