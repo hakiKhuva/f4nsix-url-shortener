@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request, send_from_directory
 from flask_migrate import Migrate
 from flask_minify import Minify
 
@@ -34,8 +34,10 @@ def create_app():
     limiter.set_limit("Home.redirector", datetime.timedelta(seconds=60), 60)
     limiter.set_limit("Track.index", datetime.timedelta(seconds=60), 20)
     limiter.set_limit("Track.image_for_shorten", datetime.timedelta(seconds=60), 25)
+    limiter.set_limit("Legal.privacy_policy", datetime.timedelta(seconds=60), 30)
+    limiter.set_limit("Legal.terms_of_service", datetime.timedelta(seconds=60), 30)
 
-    
+
     # -------------------------
     # add flask cli commands
     # -------------------------
@@ -78,6 +80,14 @@ def create_app():
             title="Not found"
         ), 404
     
+
+    @app.route('/googled75d43e26e15ddd9.html')
+    @app.route('/sitemap.xml')
+    def files_from_static_path():
+        if request.url_rule.rule == "/sitemap.xml":
+            return send_from_directory(app.static_folder, "sitemap.xml")
+        else:
+            return render_template('misc/googled75d43e26e15ddd9.html')
 
     # -------------------------
     # return final app
