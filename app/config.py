@@ -8,6 +8,7 @@ class AppConfig:
     APP_DESCRIPTION = "Free URL shortener, shorten links and track the clicks and visitors"
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days=365)
     DEBUG = True if os.environ.get('DEBUG', "FALSE").upper() == "TRUE" else False
     HTTP_SCHEME = "http" if DEBUG is True else "https"
