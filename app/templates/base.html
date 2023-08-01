@@ -38,7 +38,6 @@
     </header>
     <div class="max-container">
         <nav>
-            <a href="{{url_for('Home.index')}}" class="{{ 'active' if request.endpoint == 'Home.index'}}">Home</a>
             <a href="{{url_for('Home.shorten_url')}}" class="{{ 'active' if request.endpoint == 'Home.shorten_url'}}">Shorten URL</a>
             <a href="{{url_for('Track.index')}}" class="{{ 'active' if request.endpoint == 'Track.index'}}">Track ID</a>
         </nav>
@@ -64,10 +63,6 @@
         <div class="f">
             <a href="{{ url_for('Legal.terms_of_service') }}">Terms of service</a>
             <a href="{{ url_for('Legal.privacy_policy') }}">Privacy policy</a>
-        </div>
-        <div class="f">
-            <a href="{{GITHUB_URL}}" target="_blank">GITHUB</a>
-            <a href="{{TWITTER_URL}}" target="_blank">TWITTER</a>
         </div>
     </footer>
 </body>
