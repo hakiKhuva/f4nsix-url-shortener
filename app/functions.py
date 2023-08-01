@@ -17,6 +17,8 @@ def modified_render_template(*args,**kwargs):
     if not kwargs.get('page_description'):
         kwargs['page_description'] = current_app.config['APP_DESCRIPTION']
     kwargs['format_number'] = format_number
+    kwargs['GITHUB_URL'] = AppConfig.GITHUB_URL
+    kwargs['TWITTER_URL'] = AppConfig.TWITTER_URL
     return original_render_template(*args,**kwargs)
 
 

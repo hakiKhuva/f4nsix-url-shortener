@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{url_for('static', filename='styles_h.css')}}">
+{% endblock %}
+
+{% block body %}
+
+<div class="section-h" id="shorten-url-form-container">
+    <h2 class="h1">Free URL shortener</h2>
+    <form action="{{ url_for('Home.shorten_url') }}" method="post" class="form1" id="form-1">
+        {{form.hidden_tag()}}
+        <div>
+            {{form.url.label()}}
+            {{form.url(placeholder='Enter URL here')}}
+        </div>
+        <button type="submit">Shorten</button>
+    </form>
+</div>
+
+{% if shorten_url and shorten_tracking_id %}
+<div id="shorten-tracking-section" class="form2 ">
+    <div>
+        <label for="current-shorten-url">Shorten URL</label>
+        <input type="url" id="current-shorten-url" value="{{shorten_url}}" disabled />
+        <button type="button" onclick="copyToClipboard('{{shorten_url}}')">Copy</button>
+    </div>
+    <div>
+        <label for="current-shorten-url">Anchor tag</label>
+        <input type="url" id="current-shorten-url" value="<a href='{{shorten_url}}' referrerpolicy='origin'>{{shorten_url}}</a>" disabled />
+        <button type="button" onclick="copyToClipboard(`<a href='{{shorten_url}}' referrerpolicy='origin'>{{shorten_url}}</a>`)">Copy</button>
+    </div>
+    <div>
+        <label for="current-tracking-id">Tracking ID</label>
+        <input type="text" id="current-tracking-id" value="{{shorten_tracking_id}}" disabled/>
+        <button type="button" onclick="copyToClipboard('{{shorten_tracking_id}}')">Copy</button>
+    </div>
+</div>
+{% endif %}
+
+
+<div style="overflow: auto;" class="section-h">
+    <h2>History</h2>
+    {% if shorten_urls %}
+    <table class="table1">
+        <tbody>
+            <tr>
+                <th>Shorten URL</th>
+                <th>Destination</th>
+                <th>Tracking ID</th>
+            </tr>
+            {% for url in shorten_urls %}
+            <tr>
+                <td><a href='{{url["from"]}}' target="_blank">{{url["from"]}}</a></td>
+                <td><a href='{{url["to"]}}' target="_blank">{{url["to"]}}</a></td>
+                <td><a href="{{url_for('Track.index', id=url['tracking_id'])}}">{{url["tracking_id"]}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>You've not shorten any link yet!</p>
+    {% endif %}
+</div>
+
+<script>
+(()=>{
+    const INPUT_URL = document.querySelector('#url')
+    const TO_NOTES = document.querySelector("#to-notes")
+    document.querySelector('#form-1').addEventListener('submit', e => {
+        try {
+            new URL(INPUT_URL.value)
+        } catch(err){
+            TO_NOTES.innerHTML += `
+            <div>
+            <div class="max-container">
+                <p>Enter a valid URL!</p>
+            </div>
+            </div>`
+            e.preventDefault()
+        }
+    })
+})()
+</script>
+
+{% endblock %}

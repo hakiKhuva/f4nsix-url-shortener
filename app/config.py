@@ -5,13 +5,17 @@ import datetime
 class AppConfig:
     APP_NAME = "F4nsix"
     APP_SHORT_DESCRIPTION = "Free URL shortener"
-    APP_DESCRIPTION = "Free URL shortener, shorten links and track the clicks and visitors"
+    APP_DESCRIPTION = "Create shorten links that tracks the clicking information for you and it's free."
+
+    DEBUG = True if os.environ.get('DEBUG', "FALSE").upper() == "TRUE" else False
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days=365)
-    DEBUG = True if os.environ.get('DEBUG', "FALSE").upper() == "TRUE" else False
     HTTP_SCHEME = "http" if DEBUG is True else "https"
+
+    GITHUB_URL = "https://github.com/hakiKhuva"
+    TWITTER_URL = "https://twitter.com/khuva_harkishan"
 
 
 class BaseConfig:

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{page_description}}">
-    <meta name="keywords" content="f4nsix, url-shortener, link, url, link-shortener, free, url traffic, link traffic, analyzer, link analyzer, traffic analyzer, url shorten, link shorten">
+    <meta name="keywords" content="f4nsix, f4n6, free url shortener, best free url shortener, free link shortener, url shortener, url shortener free">
     <title>{{page_title}}</title>
 
     <meta name="og:title" property="og:title" content="{{page_title}}">
@@ -38,7 +38,8 @@
     </header>
     <div class="max-container">
         <nav>
-            <a href="{{url_for('Home.index')}}" class="{{ 'active' if request.endpoint == 'Home.index'}}">Shorten URL</a>
+            <a href="{{url_for('Home.index')}}" class="{{ 'active' if request.endpoint == 'Home.index'}}">Home</a>
+            <a href="{{url_for('Home.shorten_url')}}" class="{{ 'active' if request.endpoint == 'Home.shorten_url'}}">Shorten URL</a>
             <a href="{{url_for('Track.index')}}" class="{{ 'active' if request.endpoint == 'Track.index'}}">Track ID</a>
         </nav>
     </div>
@@ -65,8 +66,8 @@
             <a href="{{ url_for('Legal.privacy_policy') }}">Privacy policy</a>
         </div>
         <div class="f">
-            <a href="https://github.com/hakiKhuva" target="_blank">GITHUB</a>
-            <a href="https://twitter.com/khuva_harkishan" target="_blank">TWITTER</a>
+            <a href="{{GITHUB_URL}}" target="_blank">GITHUB</a>
+            <a href="{{TWITTER_URL}}" target="_blank">TWITTER</a>
         </div>
     </footer>
 </body>

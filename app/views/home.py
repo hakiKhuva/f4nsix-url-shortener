@@ -14,9 +14,15 @@ import json
 
 home = Blueprint("Home", __name__)
 
-
-@home.route("/", methods=["GET", "POST"])
+@home.route('/')
 def index():
+    return modified_render_template(
+        "home/index.html"
+    )
+
+
+@home.route("/shorten", methods=["GET", "POST"])
+def shorten_url():
     form = ShortenLinkForm({})
     SESSION_SHORTEN_URLS = json.loads(session.get('shorten-urls',"[]"))
 
@@ -28,7 +34,7 @@ def index():
 
             for item in SESSION_SHORTEN_URLS:
                 if item['to'] == url:
-                    return redirect(url_for('.index',id=item['tracking_id']))
+                    return redirect(url_for('.shorten_url',id=item['tracking_id']))
 
             shorten_code = "".join(random.choice(string.ascii_letters+string.digits) for _ in range(random.randint(3, 6)))
             while ShortenLink.query.filter(ShortenLink.code == shorten_code).count() > 0:
@@ -50,9 +56,9 @@ def index():
                 "tracking_id": shorten_link.tracking_id
             })
             session['shorten-urls'] = json.dumps(SESSION_SHORTEN_URLS)
-            return redirect(url_for('.index',id=shorten_link.tracking_id))
+            return redirect(url_for('.shorten_url',id=shorten_link.tracking_id))
         else:
-            return redirect(url_for('.index', error=list(form.errors.values())[0]))
+            return redirect(url_for('.shorten_url', error=list(form.errors.values())[0]))
 
     if request.args.get('error'):
         for item in request.args.getlist('error'):
@@ -71,7 +77,8 @@ def index():
 
     form.url.data = CURRENT_URL
     return modified_render_template(
-        "home/index.html",
+        "home/shorten_url.html",
+        page_title="Shorten URL",
         form=form,
         shorten_url=SHORTEN_URL,
         shorten_tracking_id=SHORTEN_TRACKING_ID,

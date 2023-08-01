@@ -1,5 +1,5 @@
 :root {
-    --bg: #eee;
+    --bg: rgb(250,250,250);
     --fg: #056a6d;
     --carding-bg: #fff;
     --carding-fg: #111;
@@ -22,9 +22,10 @@ body {
 }
 
 body, body * {
-    background-color: var(--bg);
+    background: var(--bg);
     color: var(--fg1);
     font-family: var(--font);
+    scroll-behavior: smooth;
 }
 
 a {
@@ -108,7 +109,7 @@ nav a:last-child {
 }
 
 #main-container {
-    padding: 20px;
+    padding: 1px 20px;
     min-height: calc( 100vh - 40px );
 }
 
@@ -147,7 +148,7 @@ nav a:last-child {
     border-color: var(--fg);
 }
 
-.form1 button[type="submit"] {
+.form1 button[type="submit"], a.button {
     cursor: pointer;
     padding: 10px 25px;
     font-size: 15px;

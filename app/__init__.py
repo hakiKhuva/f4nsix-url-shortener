@@ -81,6 +81,10 @@ def create_app():
         ), 404
     
 
+    # --------------------------------------------------
+    # misc routes for sending files
+    # --------------------------------------------------
+
     @app.route('/googled75d43e26e15ddd9.html')
     @app.route('/sitemap.xml')
     @app.route('/ads.txt')
