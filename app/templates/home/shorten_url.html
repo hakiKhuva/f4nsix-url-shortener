@@ -15,6 +15,9 @@
             {{form.url(placeholder='Enter URL here')}}
         </div>
         <button type="submit">Shorten</button>
+        {% if shorten_url and shorten_tracking_id %}
+        <a href="{{ url_for('Home.qr_code_generator_for_url', tracking_id=shorten_tracking_id) }}" class="button">Download QRCode</a>
+        {% endif %}
     </form>
 </div>
 
@@ -23,7 +26,7 @@
     <div>
         <label for="current-shorten-url">Shorten URL</label>
         <input type="url" id="current-shorten-url" value="{{shorten_url}}" disabled />
-        <button type="button" onclick="copyToClipboard('{{shorten_url}}')">Copy</button>
+        <button type="button" onclick="navigator.share({url: '{{shorten_url}}', title: 'Share {{shorten_url}}'})">Share</button>
     </div>
     <div>
         <label for="current-shorten-url">Anchor tag</label>

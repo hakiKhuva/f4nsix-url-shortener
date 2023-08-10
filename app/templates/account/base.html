@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles_account.css') }}">
+{% block account_head %}
+{% endblock %}
+{% endblock %}
+
+{% block body %}
+<div class="account-bar-holder">
+    <div class="account-bar">
+        <input type="checkbox" id="account-profile-checkbox" hidden />
+        <label id="account-profile-label" for="account-profile-checkbox" tabindex="0" >
+            <img src="{{ current_user.avatar_url }}" alt="Profile photo">
+            <h2>{{page_title}}</h2>
+        </label>
+        <div id="account-menu">
+            <form action="{{ url_for('Account.index') }}">
+                <button type="submit">Your account</button>
+            </form>
+            <form action="{{ url_for('Account.api_dashboard') }}">
+                <button type="submit">API Dashboard</button>
+            </form>
+            <form action="{{ url_for('Account.delete_account') }}">
+                <button type="submit">Delete account</button>
+            </form>
+            <form action="{{ url_for('Account.logout_user') }}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div>
+    {% block account_body %}{% endblock %}
+</div>
+{% endblock %}

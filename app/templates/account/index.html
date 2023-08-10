@@ -1,0 +1,27 @@
+{% extends "account/base.html" %}
+
+{% block account_body %}
+<div class="c-bg-fg-board">
+    <form action="{{ url_for('Account.index') }}" method="post" class="form1">
+        <h3 class="h1">Edit account</h3>
+        {{form.hidden_tag()}}
+        <div>
+            {{ form.name.label() }}
+            {{ form.name() }}
+        </div>
+        <div>
+            {{ form.email_address.label() }}
+            {{ form.email_address() }}
+        </div>
+        <div>
+            {{ form.username.label() }}
+            {{ form.username() }}
+        </div>
+        <div>
+            {{ form.promotional_emails() }}
+            {{ form.promotional_emails.label() }}
+        </div>
+        <button type="submit">Update account data</button>
+    </form>
+</div>
+{% endblock %}

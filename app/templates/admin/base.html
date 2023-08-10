@@ -27,6 +27,7 @@
             {% if admin_login_status is true %}
             <a href="{{ url_for('Admin.index') }}" class="{{ 'active' if request.endpoint == 'Admin.index'}}">Dashboard</a>
             <a href="{{ url_for('Admin.links', page=1) }}" class="{{ 'active' if request.endpoint == 'Admin.links'}}">Links</a>
+            <a href="{{ url_for('Admin.new_notification') }}" class="{{ 'active' if request.endpoint == 'Admin.new_notification'}}">New notification</a>
             <a href="{{ url_for('Admin.settings') }}" class="{{ 'active' if request.endpoint == 'Admin.settings'}}">Settings</a>
             <a href="{{ url_for('Admin.admin_sessions', page=1) }}" class="{{ 'active' if request.endpoint == 'Admin.admin_sessions'}}">Sessions</a>
             <a href="{{ url_for('Admin.logout') }}">Logout</a>
@@ -47,7 +48,7 @@
             {% endfor %}
         {% endwith %}
     </div>
-    <div class="max-container">
+    <div class="max-container" style="padding: 10px;">
         {% block body %}{% endblock %}
     </div>
 </body>

@@ -1,12 +1,17 @@
 from flask import Blueprint
+
 from ..functions import modified_render_template
+from ..limiter import limit
 
 import markdown
+import datetime
 
 
 legal = Blueprint("Legal", __name__, url_prefix='/legal')
 
+
 @legal.route('/terms-of-service')
+@limit(datetime.timedelta(minutes=1), 30)
 def terms_of_service():
     terms_of_service_render_data = markdown.markdown(
         modified_render_template(
@@ -21,6 +26,7 @@ def terms_of_service():
 
 
 @legal.route('/privacy-policy')
+@limit(datetime.timedelta(minutes=1), 30)
 def privacy_policy():
     privacy_policy_render_data = markdown.markdown(
         modified_render_template(

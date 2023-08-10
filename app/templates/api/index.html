@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles_api.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/vs2015.min.css">
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/languages/python.min.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="api-section">
+    {{rendered_data|safe}}
+</div>
+<script>
+    document.querySelectorAll("pre").forEach(e => {
+        e.classList.add('language-python')
+    })
+    hljs.highlightAll();
+</script>
+{% endblock %}

@@ -4,7 +4,7 @@ The privacy policy explains what personal information will be collected and how 
 
 ### Information collected
 
-The site will collect personal information such IP address, location of the user when you use the services. This data is used to analyze the number of users and how they use the site and services.
+The site will collect personal information such IP address, location of the user when you use the services. This data is used to analyze the number of users and how they use the site and services. Users who have created the account on the website their email address, name, profile photo or avatar image and username is collected and stored.
 
 ### Information sharing
 

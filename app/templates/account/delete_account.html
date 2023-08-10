@@ -1,0 +1,20 @@
+{% extends "account/base.html" %}
+
+{% block account_body %}
+<div class="c-bg-fg-board">
+    <form action="{{ url_for('Account.delete_account') }}" method="POST" class="form1">
+        <h3 class="h1">Delete your account</h3>
+        {{form.hidden_tag()}}
+        <div>
+            {{form.username.label()}}
+            {{form.username}}
+        </div>
+        <div>
+            {{form.agreed}}
+            {{form.agreed.label()}}
+        </div>
+        <button type="submit">DELETE ACCOUNT</button>
+    </form>
+</div>
+
+{% endblock %}

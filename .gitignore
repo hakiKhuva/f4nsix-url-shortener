@@ -1,7 +1,10 @@
 env/
 migrations/
 __pycache__/
+tests/
 
 .env
 main.py
 .vercel
+
+commits

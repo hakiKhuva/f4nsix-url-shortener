@@ -1,42 +1,36 @@
+import datetime
+from functools import wraps
+
 from flask import request, abort
 from sqlalchemy import func
-from .db import UserVisit
-
+from .db import db, UserVisit
 from .functions import get_user_ip_address
-import datetime
 
+limit_data = []
 
-class Limiter:
-    db = None
-    app = None
+def limit(timedelta_:datetime.timedelta, limit:int, response_body=None):
+    def limit_function_getter(route_function):
+        limit_data.append({
+            "func": route_function,
+            "limit": limit,
+            "time": timedelta_
+        })
+        @wraps(route_function)
+        def limit_worker(*args, **kwargs):
+            current_datetime = datetime.datetime.utcnow()
+            left_time = current_datetime-timedelta_
+            user_visits_count = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.created_date >= left_time, UserVisit.created_date <= current_datetime, UserVisit.endpoint == request.endpoint, UserVisit.user_ip_address == get_user_ip_address()).first()
 
-    def __init__(self, app, db) -> None:
-        self.init_app(app=app, db=db)
-        self.rate_data = {}
+            if user_visits_count[0]+1 > limit:
+                if response_body is not None:
+                    return response_body, 429
+                abort(429)
 
-    def init_app(self, app, db):
-        self.app = app
-        self.db = db
+            db.session.add(UserVisit(
+                endpoint = request.endpoint,
+            ))
+            db.session.commit()
+            return route_function(*args, **kwargs)
 
-        @app.before_request
-        def before_each_request():
-            if request.endpoint in self.rate_data.keys():
-                dt_right = datetime.datetime.utcnow()
-                dt_left = datetime.datetime.utcnow() - self.rate_data[request.endpoint]['timedelta']
-                user_visits_count = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.user_ip_address == get_user_ip_address(), UserVisit.endpoint == request.endpoint, UserVisit.created_date.between(dt_left, dt_right)).first()[0]
-
-                if user_visits_count > self.rate_data[request.endpoint]['per_timedelta']:
-                    abort(429)
-
-                self.db.session.add(UserVisit(
-                    endpoint=request.endpoint
-                ))
-                self.db.session.commit()
-
-
-    def set_limit(self, endpoint:str, timedelta_obj:datetime.timedelta, limit: int):
-        self.rate_data[endpoint] = {
-            "endpoint": endpoint,
-            "timedelta": timedelta_obj,
-            "per_timedelta": limit
-        }
+        return limit_worker
+    return limit_function_getter

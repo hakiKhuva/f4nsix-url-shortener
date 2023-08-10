@@ -1,0 +1,108 @@
+{% extends "account/base.html" %}
+
+{% block account_head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js" integrity="sha512-CMF3tQtjOoOJoOKlsS7/2loJlkyctwzSoDK/S40iAB+MqWSaf50uObGQSk5Ny/gfRhRCjNLvoxuCvdnERU4WGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block account_body %}
+<div>
+    {% if "current-user-api-key" in session %}
+    <div class="c-bg-fg-board">
+        <form class="form1">
+            <div>
+                <strong>For security reasons this API Key will only appear once, if you lost the API key then you can generate it once a day.</strong>
+                <input type="text" id="current-user-api-key-value" value="{{session.pop('current-user-api-key', '')}}" disabled />
+                <button class="btn" type="button" onclick="navigator.clipboard.writeText(document.querySelector('#current-user-api-key-value').value); alert('API key copied to clipboard.')">Copy to clipboard</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if is_api_key_generated is not true %}
+    <div class="c-bg-fg-board">
+        <p><strong>You don't have generated any API key, click below button to generate a new API key.</strong></p>
+    </div>
+    {% endif %}
+    {% if can_generate_new_api_key is true %}
+    <form action="{{ url_for('Account.api_dashboard') }}" method="post" class="form1" style="padding: 0px; margin: 30px 0px;">
+        {{ form.hidden_tag() }}
+        <button type="submit">Generate a new API Key</button>
+    </form>
+    {% endif %}
+
+    <div class="flex-w">
+        <div class="c-bg-fg-board-mini margin">
+            <span class="heading">Requests today</span>
+            <span class="value">{{format_number(today_requests_count)}}</span>
+        </div>
+
+        <div class="c-bg-fg-board-mini margin">
+            <span class="heading">Total requests</span>
+            <span class="value">{{format_number(total_requests_count)}}</span>
+        </div>
+    
+        <div class="c-bg-fg-board-mini margin">
+            <span class="heading">Successful requests</span>
+            <span class="value">{{format_number(successful_requests_count)}}</span>
+        </div>
+    
+        <div class="c-bg-fg-board-mini margin">
+            <span class="heading">Failed requests</span>
+            <span class="value">{{format_number(failed_requests_count)}}</span>
+        </div>
+    </div>
+
+    <div class="c-bg-fg-board">
+        <h3 class="heading">API Requests</h3>
+        <table class="table1" style="max-width:650px; margin: auto;">
+            <tr>
+                <th style="width: 70%;">Endpoint</th>
+                <th style="width: 30%;">Requests count</th>
+            </tr>
+            {% for item in routes_requests_data %}
+            <tr>
+                <td>{{item[0]}}</td>
+                <td>{{format_number(item[1])}}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">0 API request.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div class="c-bg-fg-board">
+        <h3 class="heading">Last 24 hours requests data</h3>
+        <canvas id="api-requests-for-24-hours" style="width: 100%;"></canvas>
+        <script>
+            (()=>{
+                const API_REQUESTS_TIME = JSON.parse('{{(api_requests_data_for_24h["successful"].keys()|list)[::-1]|tojson}}')
+                const SUCCESSFUL_API_REQUESTS = JSON.parse('{{(api_requests_data_for_24h["successful"].values()|list)[::-1]|tojson}}')
+                const FAILED_API_REQUESTS = JSON.parse('{{(api_requests_data_for_24h["failed"].values()|list)[::-1]|tojson}}')
+
+                new Chart("api-requests-for-24-hours",{
+                    type: "line",
+                    data: {
+                        labels: API_REQUESTS_TIME,
+                        datasets: [
+                            {
+                                label: "Successful",
+                                fill: true,
+                                data: SUCCESSFUL_API_REQUESTS,
+                                tension: 0.2
+                            },
+                            {
+                                label: "Failed",
+                                fill: true,
+                                data: FAILED_API_REQUESTS,
+                                tension: 0.2
+                            },
+                        ]
+                    }
+                })
+            })()
+        </script>
+    </div>
+
+</div>
+{% endblock %}

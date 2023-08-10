@@ -1,0 +1,7 @@
+f4nsix.xyz
+127.0.0.1
+localhost
+bit.ly
+tinyurl.com
+shorturl.at
+rb.gy

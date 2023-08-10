@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, Optional
-from wtforms.fields import EmailField, PasswordField, StringField
+from wtforms.fields import EmailField, PasswordField, StringField, TextAreaField, DateTimeLocalField
 
 from .functions import strip_value
 
@@ -36,4 +36,25 @@ class AdminEditForm(FlaskForm):
         "New Password",
         validators=[Optional(),Length(min=6, max=32, message="Password length must be between 6 to 32!"),],
         filters=[strip_value]
+    )
+
+
+
+class NotificationForm(FlaskForm):
+    notification_data =  TextAreaField(
+        label="Notification data (Markdown)",
+        validators=[DataRequired("Notification data is required!"), Length(max=2048, message="Notification data length must be less than 2048!")],
+        filters=[strip_value]
+    )
+
+    from_ = DateTimeLocalField(
+        label="From",
+        format="%Y-%m-%dT%H:%M",
+        validators=[DataRequired()]
+    )
+
+    to = DateTimeLocalField(
+        label="To",
+        format="%Y-%m-%dT%H:%M",
+        validators=[DataRequired()]
     )

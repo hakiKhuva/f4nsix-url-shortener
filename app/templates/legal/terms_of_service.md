@@ -8,11 +8,13 @@ By using this site or any service provided by this site you accept the site({{ap
 
 This site allows you to shorten URL and this shorten URL can be shared on any platform on the Internet.
 
-This shorten URL will be deleted permanently
+Shorten URL will be deleted permanently
 
 * If any user reports or redirect to the abusive/disrespectful URL.
 * If any spam
 * Receive no click in last 15 days.
+
+{{app_name}} limit the user requests as it may use more resources. The user is temporarily blocked when exceeding limits.
 
 ### Disclaimer
 

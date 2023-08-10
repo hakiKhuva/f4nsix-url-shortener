@@ -1,0 +1,98 @@
+.account-bar-holder {
+    border-bottom: 0.2px solid var(--carding-fg);
+}
+
+.account-bar {
+    width: max-content;
+    margin-left: auto;
+    margin-right: 0;
+    margin-bottom: 5px;
+    user-select: none;
+}
+
+.account-bar,
+.account-bar * {
+    z-index: 99;
+}
+
+.account-bar #account-profile-label,
+.account-bar #account-profile-label * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.account-bar #account-profile-label {
+    display: block;
+    border-radius: 50%;
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 0px 2px 0px var(--carding-fg);
+    padding: 15px 12.5px;
+}
+
+.account-bar #account-profile-label h2 {
+    margin: 0px;
+}
+
+.account-bar #account-profile-label img {
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 50%;
+    display: block;
+    margin-right: 5px;
+    box-shadow: 0px 0px 2px 0px var(--carding-fg);
+    padding: 1px;
+}
+
+.account-bar #account-menu {
+    display: none;
+    flex-direction: column;
+    border-radius: 0px 0px 2px 2px;
+    box-shadow: 0px 1px 1px 0px var(--carding-fg);
+    position: absolute;
+    /* top: 219px; */
+}
+
+.account-bar #account-menu button {
+    width: 100%;
+    padding: 12.5px 20px;
+    display: block;
+    cursor: pointer;
+    font-size: 15.5px;
+    border: 0px;
+    border-top: 1px solid var(--carding-fg);
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.account-bar #account-menu button:hover {
+    background-color: var(--bg);
+    color: var(--fg1);
+}
+
+.account-bar #account-menu form:first-of-type button {
+    border-radius: 0px;
+    /* box-shadow: 0px -1px .1px 0px var(--carding-fg); */
+}
+
+.account-bar #account-menu form:last-of-type button {
+    border-radius: 0px 0px 3px 3px;
+}
+
+.account-bar #account-menu form {
+    border-radius: 3px;
+}
+
+.account-bar #account-profile-checkbox:checked ~ #account-menu {
+    display: flex;
+}
+
+.account-bar #account-profile-checkbox:checked ~ #account-profile-label {
+    box-shadow: 0px 0px 3px 0px var(--carding-fg);
+    filter: brightness(105%);
+    border-bottom-left-radius: 0px;
+}

@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+
+{% block body %}
+<script>
+    const createPreviewForMarkdown = () => {
+        const DATA = document.querySelector("#notification_data").value;
+        fetch("{{ url_for('Admin.markdown_renderer') }}",{
+            method: "POST",
+            body: JSON.stringify({
+                data: DATA
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(resp => resp.text())
+        .then(data => {
+            document.querySelector("#preview-panel-for-markdown").innerHTML = data
+        })
+        .catch(err => {
+            document.querySelector("#preview-panel-for-markdown").textContent = 'Something went wrong, tryagain soon!'
+        })
+    }
+</script>
+<div style="margin-left: auto; margin-right: 0px; width: max-content;">
+    <a href="{{ url_for('Admin.all_notifications',page=1) }}" class="button">View all notifications</a>
+</div>
+<form action="{{ url_for('Admin.new_notification') }}" method="post" class="form1">
+    <h2>New notification</h2>
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.notification_data.label() }}
+        {{ form.notification_data() }}
+    </div>
+    <button type="button" class="btn" onclick="createPreviewForMarkdown()">Preview</button>
+    <div id="preview-panel-for-markdown"></div>
+    <div>
+        {{ form.from_.label() }}
+        {{ form.from_() }}
+    </div>
+    <div>
+        {{ form.to.label() }}
+        {{ form.to() }}
+    </div>
+    <button type="submit">Post notificaton</button>
+</form>
+{% endblock %}

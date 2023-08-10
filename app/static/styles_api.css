@@ -1,0 +1,45 @@
+*:has(table) {
+    overflow: auto;
+}
+
+table,
+table * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+    border: 1px solid var(--carding-fg);
+    border-collapse: collapse;
+    padding: 15px 20px;
+    font-family: var(--code-font);
+    font-family: monospace;
+    text-align: left;
+    font-size: 14.5px;
+    white-space: nowrap;
+}
+
+pre, code {
+    padding: 2px 5px;
+    border-radius: 5px;
+    margin: 0px;
+}
+
+pre * {
+    font-family: var(--code-font);
+}
+
+pre span, code span {
+    background-color: initial;
+    color: initial;
+}
+
+pre {
+    line-height: 25px;
+    margin: 25px 0px;
+}
+
+pre code {
+    border-radius: 0px;
+}
+
+blockquote {
+    margin: 50px 0px;
+}

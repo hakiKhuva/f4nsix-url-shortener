@@ -1,9 +1,12 @@
 :root {
-    --bg: rgb(250,250,250);
+    --bg: rgb(240,240,240);
     --fg: #056a6d;
     --carding-bg: #fff;
     --carding-fg: #111;
     --fg1: #000;
+    --code-bg: #333;
+    --code-fg: #fff;
+    --code-font: monospace;
     --font: 'Jost', sans-serif;
     --font2: 'Schibsted Grotesk', sans-serif;
     --max-w: 1280px;
@@ -26,14 +29,47 @@ body, body * {
     color: var(--fg1);
     font-family: var(--font);
     scroll-behavior: smooth;
+    z-index: 1;
 }
 
-a {
+#bmc-wbtn,
+#bmc-wbtn * {
+    background: none;
+    color: auto;
+    z-index: 98;
+}
+
+a:not(.uline) {
     text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+.notifications {
+    display: flex;
+    flex-direction: column;
+}
+
+.notifications > * {
+    margin: 5px 0px;
+    box-shadow: 0px 0px 1px 0px var(--carding-fg);
+}
+
+.notifications,
+.notifications * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+
+.notifications >:first-of-type {
+    margin-top: 0px;
+}
+
+.notifications >:last-of-type {
+    margin-bottom: 0px;
 }
 
 header#main {
@@ -44,6 +80,7 @@ header#main {
 header#main , header#main * {
     background-color: var(--fg) !important;
     color: var(--bg);
+    z-index: 100;
 }
 
 header#main a#routing-anchor {
@@ -68,6 +105,7 @@ nav a {
     font-size: 18px;
     padding: 12px 20px;
     margin: 0px 10px;
+    white-space: nowrap;
 }
 
 nav a.active {
@@ -89,11 +127,13 @@ nav a:last-child {
 #to-notes > div {
     padding: 18px;
     margin: 5px 0px;
-    border-bottom: 2px solid var(--fg1);
+    box-shadow: 0px 0px 1.5px 0px var(--carding-fg);
 }
 
-#to-notes > div:first-child {
-    border-top: 2px solid var(--fg1);
+#to-notes > div,
+#to-notes > div * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
 }
 
 #to-notes > div p {
@@ -104,7 +144,6 @@ nav a:last-child {
 #to-notes > div,
 #to-notes > div * {
     font-size: 16.5px;
-    font-family: var(--font2);
     font-weight: bold;
 }
 
@@ -127,7 +166,7 @@ nav a:last-child {
 .form1 > div {
     display: flex;
     flex-direction: column;
-    margin: 5px;
+    margin: 12.5px 5px;
 }
 
 .form1 > div > label {
@@ -135,7 +174,7 @@ nav a:last-child {
     display: block;
 }
 
-.form1 > div > input {
+.form1 > div > input, textarea {
     padding: 12.5px 15px;
     border-radius: 2px;
     border: 2px solid var(--fg1);
@@ -143,12 +182,32 @@ nav a:last-child {
     font-family: var(--font);
 }
 
-.form1 > div > input:focus {
+.form1 > div > input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    margin: 0px 10px;
+}
+
+.form1 > div:has(input[type="checkbox"]) {
+    flex-direction: row;
+    align-items: center;
+}
+
+.form1 > div > input:focus, textarea:focus {
     outline: none;
     border-color: var(--fg);
 }
 
-.form1 button[type="submit"], a.button {
+.form1 > div > input:read-write, textarea:read-write {
+    background-color: var(--carding-bg);
+}
+
+.form1 > div > input:read-only, textarea:read-only {
+    opacity: 0.8;
+    border-color: var(--code-bg);
+}
+
+.form1 button[type="submit"], a.button, button.btn {
     cursor: pointer;
     padding: 10px 25px;
     font-size: 15px;
@@ -159,6 +218,15 @@ nav a:last-child {
     font-weight: bold;
     border: 0px;
     margin: 5px;
+    transition: 200ms;
+}
+
+.form1 button[type="submit"]:focus,
+.form1 button[type="submit"]:hover,
+a.button:focus, a.button:hover,
+button.btn:focus, button.btn:hover {
+    filter: brightness(110%);
+    transition: 250ms;
 }
 
 .form2 {
@@ -240,11 +308,7 @@ nav a:last-child {
 
 footer {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    text-align: center;
+    flex-direction: column;
     padding: 15px;
     bottom: 0;
     position: relative;
@@ -260,12 +324,89 @@ footer p {
     font-size: 17.5px;
 }
 
+footer .c {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 footer .f {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 footer .f > a {
     margin: 10px 15px;
+}
+
+footer .profile-link {
+    display: flex;
+    align-items: center;
+}
+
+footer .profile-link svg {
+    width: 17px;
+    margin: 2px;
+}
+
+footer .profile-link span {
+    margin: 2px;
+    font-family: 'Cascadia Mono', monospace;
+}
+
+.c-bg-fg-board,
+.c-bg-fg-board *,
+.c-bg-fg-board-mini,
+.c-bg-fg-board-mini * {
+    background-color: var(--carding-bg);
+    color: var(--carding-fg);
+}
+
+.c-bg-fg-board,
+.c-bg-fg-board-mini {
+    border-radius: 2px;
+    box-shadow: 0px 0px 2px 0px var(--carding-fg);
+    padding: 10px;
+    margin: 10px 0px;
+}
+
+.c-bg-fg-board .heading {
+    text-align: center;
+    margin: 25px;
+}
+
+.c-bg-fg-board-mini {
+    width: max-content;
+    padding: 20px;
+}
+
+.c-bg-fg-board-mini span {
+    display: block;
+}
+
+.c-bg-fg-board-mini .heading {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.c-bg-fg-board-mini .value {
+    text-align: right;
+    font-size: 22px;
+}
+
+.flex-w {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.flex-w .margin {
+    margin: 10px;
 }
 
 @media (max-width:650px){
@@ -280,5 +421,19 @@ footer .f > a {
 
     .form2 > div button[type="button"] {
         border-radius: 0px 0px 3px 3px;
+    }
+
+    .c-bg-fg-board-mini {
+        width: 100%;
+    }
+
+    footer .c {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+
+    footer .f:has(.profile-link) {
+        display: block;
     }
 }

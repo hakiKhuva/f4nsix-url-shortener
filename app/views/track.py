@@ -1,9 +1,10 @@
 from flask import Blueprint, request, url_for, flash, abort
-from sqlalchemy import func
+from sqlalchemy import func, Date
 
 from ..db import ShortenLink, ShortenLinkTransaction
 from ..config import BaseConfig, AppConfig
 from ..functions import modified_render_template
+from ..limiter import limit
 
 import datetime
 import pygal
@@ -13,6 +14,7 @@ import urllib.parse
 track = Blueprint("Track", __name__, url_prefix='/track')
 
 @track.route('/')
+@limit(datetime.timedelta(minutes=1), 20)
 def index():
     tracking_id = request.args.get('id')
     
@@ -25,7 +27,11 @@ def index():
             tracking_data['shorten-link'] = url_for('Home.redirector', shorten_code=shorten_link.code, _external=True, _scheme=AppConfig.HTTP_SCHEME)
             tracking_data['link-destination'] = shorten_link.destination
             tracking_data['link-created-date'] = shorten_link.created_date
-            tracking_data['clicks'] = ShortenLinkTransaction.query.filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id).count()
+            tracking_data['clicks'] = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id).first()
+            if tracking_data['clicks'] is not None:
+                tracking_data['clicks'] = tracking_data['clicks'][0]
+            else:
+                tracking_data['clicks'] = 0
             tracking_data['devices'] = list([c[0], c[1]] for c in ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.device, func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id).group_by(ShortenLinkTransaction.device).order_by(func.count(ShortenLinkTransaction.device).desc()).limit(10).all())
             tracking_data['browsers'] = list([c[0], c[1]] for c in ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.browser, func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id).group_by(ShortenLinkTransaction.browser).order_by(func.count(ShortenLinkTransaction.browser).desc()).limit(10).all())
             tracking_data['operating-systems'] = list([c[0], c[1]] for c in ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.os, func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id).group_by(ShortenLinkTransaction.os).order_by(func.count(ShortenLinkTransaction.os).desc()).limit(10).all())
@@ -36,26 +42,32 @@ def index():
             )
 
             tracking_data['last-seven-days-clicks'] = {}    
-            temp_d = datetime.datetime.utcnow().date()
-            date_now = datetime.datetime(temp_d.year, temp_d.month, temp_d.day, 23, 59, 59)
+            today_utc_date = datetime.datetime.utcnow().date()
             for ikh in range(7):
-                left_day = date_now - datetime.timedelta(days=ikh) - datetime.timedelta(days=1)
-                right_day = date_now - datetime.timedelta(days=ikh)
-                data = ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.created_date).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id, ShortenLinkTransaction.created_date.between(left_day, right_day)).group_by(ShortenLinkTransaction.created_date).count()
-                tracking_data['last-seven-days-clicks'][right_day.strftime('%Y-%m-%d')] = data
+                current_date_running = today_utc_date - datetime.timedelta(days=ikh)
+                data = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id, ShortenLinkTransaction.created_date.cast(Date) == current_date_running).group_by(ShortenLinkTransaction.created_date).first()
+                if data is None:
+                    data = 0
+                else:
+                    data = data[0]
+                tracking_data['last-seven-days-clicks'][current_date_running.strftime('%Y-%m-%d')] = data
             
             tracking_data['datetime-clicks'] = {}
             temp_t = datetime.datetime.utcnow()
-            if temp_t.minute > 30:
-                t_minute = 0
+            if temp_t.minute < 30:
+                time_now = datetime.datetime(temp_t.year, temp_t.month, temp_t.day, temp_t.hour, 30, 0)
             else:
-                t_minute = 30
-            time_now = datetime.datetime(temp_t.year, temp_t.month, temp_t.day, temp_t.hour, t_minute, 0)
+                time_now = datetime.datetime(temp_t.year, temp_t.month, temp_t.day, temp_t.hour+1, 0, 0)
+
             for ikh in range(24):
                 time_delta = datetime.timedelta(hours=ikh)
                 from_ = time_now-time_delta-datetime.timedelta(hours=1)
                 to_ = time_now-time_delta
-                data = ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.created_date).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id, ShortenLinkTransaction.created_date.between(from_, to_)).group_by(ShortenLinkTransaction.created_date).count()
+                data = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id, ShortenLinkTransaction.created_date.between(from_, to_)).group_by(ShortenLinkTransaction.created_date).first()
+                if data is None:
+                    data = 0
+                else:
+                    data = data[0]
                 tracking_data["datetime-clicks"][f"{from_.strftime('%H:%M')} - {to_.strftime('%H:%M')}"] = data
 
         else:
@@ -72,6 +84,7 @@ def index():
 
 
 @track.route('/<tracking_id>/image')
+@limit(datetime.timedelta(minutes=1), 25)
 def image_for_shorten(tracking_id):
     if(request.host != urllib.parse.urlparse(request.referrer).netloc):
         abort(400)

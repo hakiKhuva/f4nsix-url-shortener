@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, session, flash
+from flask import Blueprint, request, redirect, url_for, session, flash, send_file
 from user_agents import parse
 from urllib.parse import urlparse
 
@@ -6,15 +6,19 @@ from ..functions import modified_render_template, get_user_ip_address, get_geo_d
 from ..forms.home import ShortenLinkForm
 from ..db import ShortenLink, db, ShortenLinkTransaction
 from ..config import AppConfig
+from ..core_functions import generate_shorten_link, check_domain_for_banned, build_shorten_url_for
+from ..limiter import limit
 
-import string
-import random
 import json
+import datetime
+import qrcode
+import io
 
 
 home = Blueprint("Home", __name__)
 
 @home.route('/')
+@limit(datetime.timedelta(minutes=1), limit=30)
 def index():
     return modified_render_template(
         "home/index.html"
@@ -22,6 +26,7 @@ def index():
 
 
 @home.route("/shorten", methods=["GET", "POST"])
+@limit(datetime.timedelta(minutes=1), 20)
 def shorten_url():
     form = ShortenLinkForm({})
     SESSION_SHORTEN_URLS = json.loads(session.get('shorten-urls',"[]"))
@@ -35,28 +40,22 @@ def shorten_url():
             for item in SESSION_SHORTEN_URLS:
                 if item['to'] == url:
                     return redirect(url_for('.shorten_url',id=item['tracking_id']))
-
-            shorten_code = "".join(random.choice(string.ascii_letters+string.digits) for _ in range(random.randint(3, 6)))
-            while ShortenLink.query.filter(ShortenLink.code == shorten_code).count() > 0:
-                shorten_code = "".join(random.choice(string.ascii_letters+string.digits) for _ in range(random.randint(3, 8)))
-
-            shorten_link = ShortenLink(
-                destination=url,
-                code=shorten_code
-            )
-            db.session.add(shorten_link)
-            db.session.commit()
-
-            full_shorten_url = url_for("Home.redirector", shorten_code=shorten_code, _external=True, _scheme=AppConfig.HTTP_SCHEME)
+            
+            if check_domain_for_banned(url) is True:
+                return redirect(url_for('.shorten_url', error="Entered domain is blocked!", url=url))
+            
+            response_data = generate_shorten_link(url)
+            full_shorten_url = response_data["shorten_url"]
+            tracking_id = response_data["tracking_id"]
             
             session.permanent = True
             SESSION_SHORTEN_URLS.insert(0, {
                 "to": url,
                 "from": full_shorten_url,
-                "tracking_id": shorten_link.tracking_id
+                "tracking_id": tracking_id
             })
-            session['shorten-urls'] = json.dumps(SESSION_SHORTEN_URLS)
-            return redirect(url_for('.shorten_url',id=shorten_link.tracking_id))
+            session['shorten-urls'] = json.dumps(SESSION_SHORTEN_URLS[:50])
+            return redirect(url_for('.shorten_url',id=tracking_id))
         else:
             return redirect(url_for('.shorten_url', error=list(form.errors.values())[0]))
 
@@ -75,6 +74,9 @@ def shorten_url():
                 SHORTEN_URL = item['from']
                 SHORTEN_TRACKING_ID = item['tracking_id']
 
+    if CURRENT_URL is None:
+        CURRENT_URL = request.args.get('url')
+
     form.url.data = CURRENT_URL
     return modified_render_template(
         "home/shorten_url.html",
@@ -86,7 +88,19 @@ def shorten_url():
     )
 
 
+@home.route("/qr-code/<tracking_id>")
+@limit(datetime.timedelta(minutes=1), 25)
+def qr_code_generator_for_url(tracking_id):
+    url = ShortenLink.query.filter(ShortenLink.tracking_id == tracking_id).first_or_404()
+    data = qrcode.make(build_shorten_url_for(url.code))
+    buffer = io.BytesIO()
+    data.save(buffer)
+    buffer.seek(0)
+    return send_file(buffer, mimetype="image/png", download_name=f'{tracking_id}.png', as_attachment=True)
+
+
 @home.route('/<shorten_code>')
+@limit(datetime.timedelta(minutes=1), 60)
 def redirector(shorten_code):
     shorten_link = ShortenLink.query.filter(ShortenLink.code == shorten_code).first_or_404("Shorten link could not be found, re-enter or double check the URL and tryagain later.")
 

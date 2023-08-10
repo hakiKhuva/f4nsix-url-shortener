@@ -1,0 +1,29 @@
+.auth-form {
+    margin: 15px auto;
+    max-width: max-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth-button,
+.auth-button * {
+    background-color: var(--carding-fg);
+    color: var(--carding-bg);
+}
+
+.auth-button > * {
+    margin: 1px 2px;
+}
+
+.auth-button {
+    padding: 15px 30px;
+    border-radius: 30px;
+    border: 0px;
+    margin: 10px 0px;
+    font-size: 16.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}

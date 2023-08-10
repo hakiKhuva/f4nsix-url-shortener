@@ -1,14 +1,15 @@
-.into-data p.large {
+.large {
     font-size: 2rem;
     margin: 20.5px 0px;
 }
-.into-data p.mid {
+.mid {
     font-size: 1.70rem;
     padding: 15.5px 0px;
 }
-.into-data p.small {
+.small {
     font-size: 1.20rem;
-    margin: 10px 0px;
+    margin: 20px 0px;
+    line-height: 30px;
 }
 
 .section-h {
@@ -61,10 +62,41 @@
     list-style: square;
 }
 
+.img-svg-side {
+    display: grid;
+    grid-template-columns: 25% 25%;
+    align-items: center;
+    justify-content: center;
+    padding: 25px !important;
+}
+
+.img-svg-side svg {
+    width: 40px;
+    height: 40px;
+    padding: 15px;
+}
+
 @media (max-width:1100px) {
     .grid-2 {
         grid-template-columns: 50% 50%;
     }
+}
+
+.n-1 {
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.n-1 .button {
+    font-size: 22px;
+    margin: 15px 5px;
+}
+
+.n-1 .button:hover {
+    filter: brightness(130%) drop-shadow(0px 5px 1mm var(--carding-fg));
 }
 
 @media (max-width:900px) {

@@ -24,25 +24,15 @@ def create_app():
     
     Migrate(app, db)
     Minify(app)
-    
-    # -------------------------
-    # Requests rate limiting
-    # -------------------------
-    from .limiter import Limiter
-    limiter = Limiter(app, db)
-    limiter.set_limit("Home.index", datetime.timedelta(seconds=60), 20)
-    limiter.set_limit("Home.redirector", datetime.timedelta(seconds=60), 60)
-    limiter.set_limit("Track.index", datetime.timedelta(seconds=60), 20)
-    limiter.set_limit("Track.image_for_shorten", datetime.timedelta(seconds=60), 25)
-    limiter.set_limit("Legal.privacy_policy", datetime.timedelta(seconds=60), 30)
-    limiter.set_limit("Legal.terms_of_service", datetime.timedelta(seconds=60), 30)
 
 
     # -------------------------
     # add flask cli commands
     # -------------------------
-    from .commands import create_admin_user
+    from .commands import create_admin_user, rate_limit_show
     app.cli.add_command(create_admin_user)
+    app.cli.add_command(rate_limit_show)
+
 
     # -------------------------
     # register Flask Blueprints
@@ -58,6 +48,15 @@ def create_app():
 
     from .views.admin import admin
     app.register_blueprint(admin)
+    
+    from .views.auth import auth
+    app.register_blueprint(auth)
+
+    from .views.api import api
+    app.register_blueprint(api)
+
+    from .views.account import account
+    app.register_blueprint(account)
 
 
     # -------------------------
@@ -69,7 +68,7 @@ def create_app():
     def rate_limit_handler(e):
         return modified_render_template(
             "errors/rate_limit.html",
-            title="Too many requests"
+            page_title="Too many requests"
         ), 429
 
 
@@ -77,7 +76,7 @@ def create_app():
     def not_found_handler(e):
         return modified_render_template(
             "errors/not_found.html",
-            title="Not found"
+            page_title="Not found"
         ), 404
     
 

@@ -2,15 +2,17 @@ from flask import Blueprint, request, session, flash, redirect, url_for, abort
 from sqlalchemy import func, Date
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..db import AdminUser, BlacklistIP, AdminUserSession, ShortenLink, ShortenLinkTransaction, UserVisit, db
+from ..db import AdminUser, BlacklistIP, AdminUserSession, ShortenLink, ShortenLinkTransaction, UserVisit, db, User, APIRequest, Notification
 from ..functions import modified_render_template, get_user_ip_address, get_geo_data, get_date
 from ..admin_functions import blacklist_current_user, get_current_admin_user
 from ..admin_decorators import admin_login_required
-from ..forms.admin import AdminLoginForm, AdminEditForm
+from ..forms.admin import AdminLoginForm, AdminEditForm, NotificationForm
+from ..forms.universal import UniversalCsrfForm
 from ..config import AdminConfig, BaseConfig
 
 import datetime
 import pygal
+import markdown
 
 
 admin = Blueprint("Admin", __name__, url_prefix="/admin")
@@ -85,13 +87,33 @@ def index():
     data["graphs"] = {}
     data["table-data"] = {}
 
-    data["cards"]["Links count"] = ShortenLink.query.with_entities(func.count(ShortenLink.id)).first()[0]
-    data["cards"]["Unique links transactions"] = ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.shorten_link_id.distinct()).first()[0]
-    data["cards"]["Links transactions"] = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).first()[0]
-    data["cards"]["Blacklist IP"] = BlacklistIP.query.with_entities(func.count(BlacklistIP.id)).first()[0]
-    data["cards"]["User visits"] = UserVisit.query.with_entities(func.count(UserVisit.id)).first()[0]
-    data["cards"]["User visits without redirects"] = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.endpoint != "Home.redirector").first()[0]
-    data["cards"]["Unique users"] = UserVisit.query.with_entities(UserVisit.user_ip_address.distinct()).count()
+    q = ShortenLink.query.with_entities(func.count(ShortenLink.id)).first()
+    data["cards"]["Links count"] = q[0] if q is not None else 0
+
+    q = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.shorten_link_id.distinct())).first()
+    data["cards"]["Unique links transactions"] = q[0] if q is not None else 0
+
+    q = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).first()
+    data["cards"]["Links transactions"] = q[0] if q is not None else 0
+
+    q = BlacklistIP.query.with_entities(func.count(BlacklistIP.ipaddress.distinct())).first()
+    data["cards"]["Blacklist IP"] = q[0] if q is not None else 0
+
+    q = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.endpoint != "Home.redirector").first()
+    data["cards"]["User visits (No redirect)"] = q[0] if q is not None else 0
+    
+    q = UserVisit.query.with_entities(func.count(UserVisit.user_ip_address.distinct())).first()
+    data["cards"]["Unique users"] = q[0] if q is not None else 0
+
+    q = User.query.with_entities(func.count(User.id)).first()
+    data["cards"]["User Accounts"] = q[0] if q is not None else 0
+
+    q = User.query.with_entities(func.count(User.id)).filter(User.api_key != None).first()
+    data["cards"]["API Keys"] = q[0] if q is not None else 0
+
+    q = APIRequest.query.with_entities(func.count(APIRequest.id)).first()
+    data["cards"]["API requests"] = q[0] if q is not None else 0
+
 
     data["table-data"]["countries"] = []
     for country_item in ShortenLinkTransaction.query.with_entities(ShortenLinkTransaction.country, func.count(ShortenLinkTransaction.id)).group_by(ShortenLinkTransaction.country).order_by(func.count(ShortenLinkTransaction.id).desc()).all():
@@ -100,22 +122,20 @@ def index():
     date_today = get_date()
     
     GRAPH_DAYS = 21
-    data["graphs"]["user-visits-without-redirects-data"] = {}
+    data["graphs"]["user-visits-no-redirects-data"] = {}
     for ikh in range(GRAPH_DAYS):
         current = date_today - datetime.timedelta(days=ikh)
-        prev = date_today - datetime.timedelta(days=ikh) - datetime.timedelta(days=1)
-        d = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.created_date.cast(Date) > prev, UserVisit.created_date.cast(Date) <= current).filter(UserVisit.endpoint != "Home.redirector").group_by(UserVisit.created_date.cast(Date)).first()
+        d = UserVisit.query.with_entities(func.count(UserVisit.id)).filter(UserVisit.created_date.cast(Date) == current).filter(UserVisit.endpoint != "Home.redirector").group_by(UserVisit.created_date.cast(Date)).first()
         if d is not None:
             visits = d[0]
         else:
             visits = 0
-        data["graphs"]["user-visits-without-redirects-data"][current.strftime('%d-%m')] = visits
+        data["graphs"]["user-visits-no-redirects-data"][current.strftime('%d-%m')] = visits
     
     data["graphs"]["links-created-data"] = {}
     for ikh in range(GRAPH_DAYS):
         current = date_today - datetime.timedelta(days=ikh)
-        prev = date_today - datetime.timedelta(days=ikh) - datetime.timedelta(days=1)
-        d = ShortenLink.query.with_entities(func.count(ShortenLink.id)).filter(ShortenLink.created_date.cast(Date) > prev, ShortenLink.created_date.cast(Date) <= current).group_by(ShortenLink.created_date.cast(Date)).first()
+        d = ShortenLink.query.with_entities(func.count(ShortenLink.id)).filter(ShortenLink.created_date.cast(Date) == current).group_by(ShortenLink.created_date.cast(Date)).first()
         if d is not None:
             links_created_count = d[0]
         else:
@@ -125,13 +145,26 @@ def index():
     data["graphs"]["link-transactions-data"] = {}
     for ikh in range(GRAPH_DAYS):
         current = date_today - datetime.timedelta(days=ikh)
-        prev = date_today - datetime.timedelta(days=ikh) - datetime.timedelta(days=1)
-        d = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.created_date.cast(Date) > prev, ShortenLinkTransaction.created_date.cast(Date) <= current).group_by(ShortenLinkTransaction.created_date.cast(Date)).first()
+        d = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.created_date.cast(Date) == current).group_by(ShortenLinkTransaction.created_date.cast(Date)).first()
         if d is not None:
             link_transactions_count = d[0]
         else:
             link_transactions_count = 0
         data["graphs"]["link-transactions-data"][current.strftime('%d-%m')] = link_transactions_count
+    
+    data["graphs"]["user-accounts-data"] = {}
+    for ikh in range(GRAPH_DAYS):
+        current = date_today - datetime.timedelta(days=ikh)
+        d = User.query.with_entities(func.count(User.id)).filter(User.created_date.cast(Date) == current).group_by(User.created_date.cast(Date)).first()
+        user_accounts_count = d[0] if d is not None else 0
+        data["graphs"]["user-accounts-data"][current.strftime('%d-%m')] = user_accounts_count
+    
+    data["graphs"]["api-requests-data"] = {}
+    for ikh in range(GRAPH_DAYS):
+        current = date_today - datetime.timedelta(days=ikh)
+        d = APIRequest.query.with_entities(func.count(APIRequest.id)).filter(APIRequest.created_date.cast(Date) == current).group_by(APIRequest.created_date.cast(Date)).first()
+        api_requests_count = d[0] if d is not None else 0
+        data["graphs"]["api-requests-data"][current.strftime('%d-%m')] = api_requests_count
 
     return modified_render_template(
         "admin/index.html",
@@ -190,6 +223,81 @@ def settings():
         admin_login_status=True,
         page_title="Admin settings",
         form=form
+    )
+
+@admin.route("/new-notification", methods=['GET', 'POST'])
+@admin_login_required
+def new_notification():
+    form = NotificationForm()
+    current_user = get_current_admin_user()
+
+    if request.method == "POST":
+        form = NotificationForm(request.form)
+        if form.validate_on_submit() is True:
+            notification_data = form.notification_data.data
+            from_ = form.from_.data
+            to = form.to.data
+
+            db.session.add(Notification(
+                render_data = markdown.markdown(notification_data),
+                from_ = from_.astimezone(datetime.timezone.utc).replace(tzinfo=None),
+                to = to.astimezone(datetime.timezone.utc).replace(tzinfo=None),
+                admin_id = current_user.id
+            ))
+            db.session.commit()
+            flash("Notification posted successfully.")
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+        return redirect(url_for(".new_notification"))
+
+    return modified_render_template(
+        "admin/new_notification.html",
+        page_title="New notification",
+        admin_login_status=True,
+        form=form
+    )
+
+
+@admin.route("/markdown-render", methods=['POST'])
+@admin_login_required
+def markdown_renderer():
+    data = request.get_json().get('data')
+    if data is None: abort(400)
+    return markdown.markdown(data, extensions=['tables', 'fenced_code'])
+
+
+@admin.route("/notifications/<int:page>", methods=['GET', 'POST'])
+@admin_login_required
+def all_notifications(page: int):
+    form = UniversalCsrfForm()
+    user = get_current_admin_user()
+
+    if request.method == "POST":
+        form = UniversalCsrfForm(request.form)
+        if form.validate_on_submit() is True:
+            public_id = request.form.get('public-id')
+            if not public_id: abort(400)
+            d = Notification.query.filter(Notification.public_id == public_id).first_or_404()
+            db.session.delete(d)
+            db.session.commit()
+            flash("Notification with Id {} deleted successfully".format(public_id))
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    flash(error)
+        return redirect(url_for("Admin.all_notifications",page=page))
+
+    q_data = Notification.query.filter(Notification.admin_id == user.id).paginate(per_page=10, page=page)
+
+    return modified_render_template(
+        "admin/all_notifications.html",
+        page_title="All notifications",
+        paginate=q_data,
+        admin_login_status=True,
+        form=form,
+        page=page
     )
 
 

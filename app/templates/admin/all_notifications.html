@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+
+{% block body %}
+<h2>All notifications</h2>
+<div>
+    <table class="table1">
+        <tbody>
+            <tr>
+                <th width="33.33%">Current page</th>
+                <th width="33.33%">Pages</th>
+                <th width="33.33%">Jump to</th>
+            </tr>
+            <tr>
+                <td>{{paginate.page}}</td>
+                <td>{{paginate.pages}}</td>
+                <td>
+                    <select onchange="window.location = this.value">
+                        {% for page in paginate.iter_pages() %}
+                        {% if paginate.page == page %}
+                        <option value="{{url_for('Admin.all_notifications',page=page)}}" selected>{{page}}</option>
+                        {% else %}
+                        <option value="{{url_for('Admin.all_notifications',page=page)}}">{{page}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="overflow: auto;">
+    <table class="table1">
+        <tbody>
+            <tr>
+                <th>Notification data</th>
+                <th>Timelife</th>
+                <th>Created date</th>
+                <th>Actions</th>
+            </tr>
+            {% for item in paginate %}
+            <tr>
+                <td>{{item.render_data[:200]|safe}}</td>
+                <td>{{item.from_.strftime('%d-%m-%Y %H:%M UTC')}} - {{item.to.strftime('%d-%m-%Y %H:%M UTC')}}</td>
+                <td>{{item.created_date.strftime('%d-%m-%Y %H:%M UTC')}}</td>
+                <td>
+                    <form action="{{url_for('Admin.all_notifications',page=page)}}" method="post">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="public-id" value="{{item.public_id}}">
+                        <button type="submit" style="cursor: pointer;">DELETE</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+</div>
+{% endblock %}
