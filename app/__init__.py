@@ -86,12 +86,12 @@ def create_app():
 
     @app.route('/googled75d43e26e15ddd9.html')
     @app.route('/sitemap.xml')
-    @app.route('/ads.txt')
+    @app.route('/robots.txt')
     def files_from_static_path():
         if request.url_rule.rule == "/sitemap.xml":
             return send_from_directory(app.static_folder, "sitemap.xml")
-        elif request.url_rule.rule == "/ads.txt":
-            return send_from_directory(app.static_folder, "ads.txt")
+        if request.url_rule.rule == "/robots.txt":
+            return send_from_directory(app.static_folder, "robots.txt")
         else:
             return render_template('misc/googled75d43e26e15ddd9.html')
 
