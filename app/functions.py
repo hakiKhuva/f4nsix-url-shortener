@@ -14,7 +14,7 @@ def modified_render_template(*args,**kwargs):
     """
     from .db import Notification
 
-    kwargs['app_name'] = current_app.config['APP_NAME']
+    kwargs['app_name'] = AppConfig.APP_NAME
     kwargs['app_short_description'] = AppConfig.APP_SHORT_DESCRIPTION
     kwargs['app_debug'] = AppConfig.DEBUG
     kwargs['format_number'] = format_number
@@ -27,9 +27,9 @@ def modified_render_template(*args,**kwargs):
     kwargs['LINKEDIN_TEXT'] = AppConfig.LINKEDIN_TEXT
 
     if not kwargs.get('page_title'):
-        kwargs['page_title'] = current_app.config['APP_NAME']+" - "+current_app.config['APP_SHORT_DESCRIPTION']
+        kwargs['page_title'] = AppConfig.APP_SHORT_DESCRIPTION+" - "+AppConfig.APP_NAME
     if not kwargs.get('page_description'):
-        kwargs['page_description'] = current_app.config['APP_DESCRIPTION']
+        kwargs['page_description'] = AppConfig.APP_DESCRIPTION
     
     kwargs['ALL_NOTIFICATIONS'] = [x.render_data for x in Notification.query.filter(datetime.datetime.utcnow() > Notification.from_ , datetime.datetime.utcnow() < Notification.to).all()]
 

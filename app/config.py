@@ -5,7 +5,7 @@ import datetime
 class AppConfig:
     APP_NAME = "F4nsix"
     APP_SHORT_DESCRIPTION = "Free URL shortener"
-    APP_DESCRIPTION = "Create shorten links that tracks the clicking information for you and it's free."
+    APP_DESCRIPTION = "Create shorten links that tracks the clicking information for you. No sign up required, it's free."
 
     DEBUG = True if os.environ.get('DEBUG', "FALSE").upper() == "TRUE" else False
     SECRET_KEY = os.environ.get('SECRET_KEY')
