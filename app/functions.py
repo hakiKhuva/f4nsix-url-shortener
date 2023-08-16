@@ -24,6 +24,7 @@ def modified_render_template(*args,**kwargs):
     kwargs['LINKEDIN_URL'] = AppConfig.LINKEDIN_URL
     kwargs['GITHUB_TEXT'] = AppConfig.GITHUB_TEXT
     kwargs['TWITTER_TEXT'] = AppConfig.TWITTER_TEXT
+    kwargs['TWITTER_USERNAME'] = AppConfig.TWITTER_USERNAME
     kwargs['LINKEDIN_TEXT'] = AppConfig.LINKEDIN_TEXT
 
     if not kwargs.get('page_title'):

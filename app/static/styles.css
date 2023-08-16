@@ -1,6 +1,8 @@
 :root {
-    --bg: rgb(240,240,240);
+    --bg: rgb(237,237,237);
     --fg: #056a6d;
+    --bg-dark: rgb(220, 220, 220);
+    --fg-dark: #000;
     --carding-bg: #fff;
     --carding-fg: #111;
     --fg1: #000;

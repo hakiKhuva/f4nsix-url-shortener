@@ -25,7 +25,7 @@
                     <li>Access to API<small>(Account required)</small></li>
                 </ul>
             </div>
-            <a href="{{ url_for('Home.shorten_url') }}" class="button">Create shorten url</a>
+            <a href="{{ url_for('Home.shorten_url') }}" class="button" title="Start Creating Shorten URL">Create shorten url</a>
         </div>
         <div class="g g-img-container">
             <img src="{{ url_for('static', filename='images/track_page_image.png') }}" alt="Tracking shorten url dashboard" >
@@ -38,7 +38,7 @@
     <div class="grid-2">
         <div class="g">
             <h2 class="h1">How to use?</h2>
-            <p class="small">{{app_name}} allow users to shorten any type of long urls. It can be from <a href="https://www.youtube.com">YouTube</a>, <a href="https://www.github.com">GitHub</a>, <a href="https://www.linkedin.com">LinkedIn</a>, <a href="https://www.instagram.com">Instagram</a> and from blogging sites or other sites. You have to just type or paste the URL <a href="{{url_for('Home.shorten_url')}}">here</a> and click on Shorten to create shorten links.</p>
+            <p class="small">{{app_name}} allow users to shorten any type of long urls. It can be from <a href="https://www.youtube.com">YouTube</a>, <a href="https://www.github.com">GitHub</a>, <a href="https://www.linkedin.com">LinkedIn</a>, <a href="https://www.instagram.com">Instagram</a> and from blogging sites or other sites. You have to just type or paste the URL and click on Shorten to create shorten links.</p>
             <p class="small">When you shorten any URL you get shorten url and also a tracking id. The tracking id is used to track the visitors of the shorten url.</p>
             <p class="small">{{app_name}} also provides API to Integrate in your project and It's free. You've to only log in with your GitHub account and have to generate an API key.</p>
         </div>
@@ -57,9 +57,37 @@
     </div>
 </div>
 
+<div class="section-h grid-22">
+    <div class="g g-img-container">
+        <img src="{{ url_for('static', filename='images/st1.png') }}" alt="Shorten link page screenshot" />
+    </div>
+    <div class="g">
+        <p class="mid">Paste or type the URL in input field and click on Shorten to generate a shorten URL.</p>
+    </div>
+</div>
+
+<div class="section-h grid-22 reverse-med" style="grid-template-columns: 60% 40%;">
+    <div class="g">
+        <p class="mid">Copy the shorten link or download the QR code image and share it.</p>
+        <p class="small">You should also copy the tracking id to view the clicks and other data such browsers, platform, os, referrers, countries...</p>
+    </div>
+    <div class="g g-img-container">
+        <img height="200px" width="200px" src="{{ url_for('static', filename='images/qr1.png') }}" alt="Shorten link page screenshot" />
+    </div>
+</div>
+
+<div class="section-h grid-22">
+    <div class="g g-img-container">
+        <img src="{{ url_for('static', filename='images/st2.png') }}" alt="Track shorten url screenshot" />
+    </div>
+    <div class="g">
+        <p class="mid">View the clicks and other details of clicking by entering tracking id.</p>
+    </div>
+</div>
+
 <div class="section-h n-1">
     <h2 class="h1">IT'S FREE & EASY TO USE.</h2>
-    <a href="{{ url_for('Home.shorten_url') }}" class="button large">Get started</a>
+    <a href="{{ url_for('Home.shorten_url') }}" title="Get started today" class="button large">Get started</a>
 </div>
 
 {% endblock %}

@@ -18,6 +18,7 @@ class AppConfig:
     GITHUB_TEXT = "/hakiKhuva"
     TWITTER_URL = "https://twitter.com/khuva_harkishan"
     TWITTER_TEXT = "/khuva_harkishan"
+    TWITTER_USERNAME = "khuva_harkishan"
     LINKEDIN_URL = "https://www.linkedin.com/in/harkishankhuva"
     LINKEDIN_TEXT = "/in/harkishankhuva"
 

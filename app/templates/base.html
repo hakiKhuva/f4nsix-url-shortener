@@ -4,14 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{page_description}}">
-    <meta name="keywords" content="f4nsix, f4n6, url shortener, link shortener, url shortener free, link shortener free, free url shortener, best url shortener, url shortener no signup, url shortener api, free api, url shortener api,  free url shortener api, short link generator, short link generator without signup, free shorten, create url">
+    <meta name="keywords" content="f4nsix, f4n6, url shortener, link shortener, url shortener free, link shortener free, free url shortener, best url shortener, url shortener no signup, url shortener api, free api, url shortener api,  free url shortener api, short link generator, short link generator without signup, free shorten, create url, create shorten url">
     <title>{{page_title}}</title>
 
-    <meta name="og:title" property="og:title" content="{{page_title}}">
-    <meta name="og:description" property="og:description" content="{{page_description}}">
-    <meta name="og:url" property="og:url" content="{{request.url}}">
+    <meta property="og:title" content="{{page_title}}">
+    <meta property="og:description" content="{{page_description}}">
+    <meta property="og:image" content="{{ url_for('static', filename='icons/android-chrome-512x512.png') }}" />
+    <meta property="og:image:secure_url" content="{{ url_for('static', filename='icons/android-chrome-512x512.png') }}" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@{{TWITTER_USERNAME}}">
+    <meta name="twitter:title" content="{{ page_title }}">
+    <meta name="twitter:description" content="{{ page_description }}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='icons/android-chrome-512x512.png') }}" />
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
+    <link rel="icon" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
+    <link rel="icon" sizes="192x192" href="{{ url_for('static', filename='icons/android-chrome-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800;900&family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet">
