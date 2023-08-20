@@ -29,11 +29,6 @@
         <button type="button" onclick="navigator.share({url: '{{shorten_url}}', title: 'Share {{shorten_url}}'})">Share</button>
     </div>
     <div>
-        <label for="current-shorten-url">Anchor tag</label>
-        <input type="url" id="current-shorten-url" value="<a href='{{shorten_url}}' referrerpolicy='origin'>{{shorten_url}}</a>" disabled />
-        <button type="button" onclick="copyToClipboard(`<a href='{{shorten_url}}' referrerpolicy='origin'>{{shorten_url}}</a>`)">Copy</button>
-    </div>
-    <div>
         <label for="current-tracking-id">Tracking ID</label>
         <input type="text" id="current-tracking-id" value="{{shorten_tracking_id}}" disabled/>
         <button type="button" onclick="copyToClipboard('{{shorten_tracking_id}}')">Copy</button>

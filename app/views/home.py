@@ -127,8 +127,8 @@ def redirector(shorten_code):
     
     REQUEST_REFERRER = request.referrer
     REFERRER = None
-    if urlparse(REQUEST_REFERRER).netloc != request.host:
-        REFERRER = urlparse(REQUEST_REFERRER).hostname
+    if REQUEST_REFERRER:
+        REFERRER = urlparse(REQUEST_REFERRER).netloc
 
     transaction = ShortenLinkTransaction(
         device=DEVICE[:64],
