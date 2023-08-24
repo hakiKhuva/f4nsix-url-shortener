@@ -15,7 +15,7 @@
                 <td>{{paginate.pages}}</td>
                 <td>
                     <select onchange="window.location = this.value">
-                        {% for page in paginate.iter_pages() %}
+                        {% for page in page_range %}
                         {% if paginate.page == page %}
                         <option value="{{url_for('Admin.links',page=page)}}" selected>{{page}}</option>
                         {% else %}

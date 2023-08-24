@@ -297,7 +297,8 @@ def all_notifications(page: int):
         paginate=q_data,
         admin_login_status=True,
         form=form,
-        page=page
+        page=page,
+        page_range=range(1, q_data.pages+1)
     )
 
 
@@ -325,7 +326,8 @@ def admin_sessions(page: int):
         admin_login_status=True,
         max_admin_session_time=AdminConfig.SESSION_EXPIRE_TIME,
         paginate=paginate,
-        country_codes=BaseConfig.COUNTRIES_DATA
+        country_codes=BaseConfig.COUNTRIES_DATA,
+        page_range=range(1, paginate.pages+1)
     )
 
 
@@ -338,7 +340,8 @@ def links(page: int):
         "admin/links.html",
         page_title="All links",
         admin_login_status=True,
-        paginate=links_data
+        paginate=links_data,
+        page_range=range(1,links_data.pages+1)
     )
 
 
