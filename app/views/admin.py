@@ -13,6 +13,7 @@ from ..config import AdminConfig, BaseConfig
 import datetime
 import pygal
 import markdown
+import pytz
 
 
 admin = Blueprint("Admin", __name__, url_prefix="/admin")
@@ -64,7 +65,7 @@ def login():
             db.session.add(u_session)
             db.session.commit()
             session['admin-session-id'] = u_session.session_id
-
+            session['admin-session-timezone'] = geo_data.get("timezone", "UTC")
             return redirect(url_for('.index'))
         else:
             for errors in form.errors.values():
@@ -225,6 +226,7 @@ def settings():
         form=form
     )
 
+
 @admin.route("/new-notification", methods=['GET', 'POST'])
 @admin_login_required
 def new_notification():
@@ -237,11 +239,13 @@ def new_notification():
             notification_data = form.notification_data.data
             from_ = form.from_.data
             to = form.to.data
-
+            ADMIN_SESSION_TIMEZONE = pytz.timezone(session["admin-session-timezone"])
+            from_ = ADMIN_SESSION_TIMEZONE.localize(from_).astimezone(pytz.timezone("UTC")).replace(tzinfo=None)
+            to = ADMIN_SESSION_TIMEZONE.localize(to).astimezone(pytz.timezone("UTC")).replace(tzinfo=None)
             db.session.add(Notification(
                 render_data = markdown.markdown(notification_data),
-                from_ = from_.astimezone(datetime.timezone.utc).replace(tzinfo=None),
-                to = to.astimezone(datetime.timezone.utc).replace(tzinfo=None),
+                from_ = from_,
+                to = to,
                 admin_id = current_user.id
             ))
             db.session.commit()

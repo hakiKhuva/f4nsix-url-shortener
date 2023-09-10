@@ -57,6 +57,7 @@ a:hover {
 .notifications > * {
     margin: 5px 0px;
     box-shadow: 0px 0px 1px 0px var(--carding-fg);
+    padding: 10px;
 }
 
 .notifications,
