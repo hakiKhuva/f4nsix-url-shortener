@@ -11,7 +11,7 @@
     <form action="{{ url_for('Track.index') }}" method="get" class="form1">
         <div>
             <label for="tracking-id">Tracking ID</label>
-            <input type="text" name="id" id="tracking-id" placeholder="Enter Tracking ID" value="{{request.args.get('id','')}}">
+            <input type="text" name="id" id="tracking-id" placeholder="Enter Tracking ID" maxlength="{{MAX_LENGTH_FOR_TRACKING_ID}}" value="{{request.args.get('id','')}}">
         </div>
         <button type="submit">Track</button>
     </form>

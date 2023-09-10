@@ -28,6 +28,7 @@ def index():
     return modified_render_template(
         "auth/index.html",
         page_title="Log into your account",
+        page_description="Log into your account and generate your API key. API key can be used to create, manage shortened URL by sending http requests to API endpoints, it's free to use."
     )
 
 

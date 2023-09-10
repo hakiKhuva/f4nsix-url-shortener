@@ -31,6 +31,7 @@ def api_docs():
     return modified_render_template(
         "api/index.html",
         page_title=f"{AppConfig.APP_NAME} URL shortener API docs",
+        page_description=f"Create and manage shorten URLs using the {AppConfig.APP_NAME} URL shortener API. Shorten the URL and track the clicks, referrers, devices and countries info of shorten URL using the API.",
         rendered_data=rendered_md
     )
 
@@ -44,7 +45,7 @@ def shorten_url(current_user):
     url = request.args.get("url", request.form.get("url"))
     if request.is_json is True and url is None:
         url = request.json.get('url')
-
+    
     try:
         is_valid = validators.url(url,)
     except validators.ValidationFailure:
@@ -55,6 +56,12 @@ def shorten_url(current_user):
         is_valid = False
 
     if is_valid is True:
+        if len(url) > BaseConfig.LONG_URL_MAX_LIMIT:
+            return jsonify({
+                "status": "error",
+                "message": "URL length must be less than {} letters!".format(BaseConfig.LONG_URL_MAX_LIMIT)
+            }), 400
+
         if check_domain_for_banned(url) is True:
             return jsonify({
                 "status": "error",
@@ -148,6 +155,12 @@ def all_urls(current_user):
 @api_key_required
 @save_api_requests
 def track_or_delete_the_url(current_user, tracking_id):
+    if len(tracking_id) > BaseConfig.TRACKING_ID_MAX_LIMIT:
+        return jsonify({
+            "status": "error",
+            "message": "Tracking id length must be less than or equal to {}!".format(BaseConfig.TRACKING_ID_MAX_LIMIT)
+        }), 400
+
     shorten_link_in_db = ShortenLink.query.filter(ShortenLink.tracking_id == tracking_id, ShortenLink.user_id == current_user.id).first()
     if shorten_link_in_db is None:
         return jsonify({

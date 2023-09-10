@@ -3,6 +3,7 @@ from sqlalchemy import Column, BigInteger, String, Integer, DateTime, Text, Fore
 from datetime import datetime
 
 from .functions import get_user_ip_address
+from .config import BaseConfig
 
 import uuid
 import random
@@ -20,7 +21,7 @@ class ShortenLink(Base):
     __tablename__ = "shorten_links"
     destination = Column(Text(), nullable=False)
     code = Column(String(16), nullable=False, unique=True)
-    tracking_id = Column(String(32), nullable=False, unique=True, default=lambda:uuid.uuid4().hex[random.randint(3, 6):random.randint(17,20)].upper()) # changed tracking id length
+    tracking_id = Column(String(32), nullable=False, unique=True, default=lambda:uuid.uuid4().hex[random.randint(3, 6):random.randint(17,BaseConfig.TRACKING_ID_MAX_LIMIT)].upper()) # changed tracking id length
 
     user_id = Column(BigInteger().with_variant(Integer, 'sqlite'), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
 

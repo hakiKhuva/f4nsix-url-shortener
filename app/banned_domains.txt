@@ -5,3 +5,5 @@ bit.ly
 tinyurl.com
 shorturl.at
 rb.gy
+youtu.be
+t.co
