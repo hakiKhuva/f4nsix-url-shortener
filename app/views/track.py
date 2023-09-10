@@ -66,9 +66,9 @@ def index():
                     data = ShortenLinkTransaction.query.with_entities(func.count(ShortenLinkTransaction.id)).filter(ShortenLinkTransaction.shorten_link_id == shorten_link.id, ShortenLinkTransaction.created_date.between(from_, to_)).group_by(ShortenLinkTransaction.created_date).first()
                     if data is None:
                         data = 0
-                else:
-                    data = data[0]
-                tracking_data["datetime-clicks"][f"{from_.strftime('%H:%M')} - {to_.strftime('%H:%M')}"] = data
+                    else:
+                        data = data[0]
+                    tracking_data["datetime-clicks"][f"{from_.strftime('%H:%M')} - {to_.strftime('%H:%M')}"] = data
             else:
                 flash("Entered tracking id could not be found!")
         else:
