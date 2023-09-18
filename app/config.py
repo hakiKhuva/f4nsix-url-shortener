@@ -10,6 +10,7 @@ class AppConfig:
     DEBUG = True if os.environ.get('DEBUG', "FALSE").upper() == "TRUE" else False
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+    CLARITY_ID = os.environ.get("CLARITY_ID")
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(days=365)
     HTTP_SCHEME = "http" if DEBUG is True else "https"

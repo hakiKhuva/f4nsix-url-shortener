@@ -26,6 +26,7 @@ def modified_render_template(*args,**kwargs):
     kwargs['TWITTER_TEXT'] = AppConfig.TWITTER_TEXT
     kwargs['TWITTER_USERNAME'] = AppConfig.TWITTER_USERNAME
     kwargs['LINKEDIN_TEXT'] = AppConfig.LINKEDIN_TEXT
+    kwargs['CLARITY_ID'] = AppConfig.CLARITY_ID
 
     if not kwargs.get('page_title'):
         kwargs['page_title'] = AppConfig.APP_SHORT_DESCRIPTION+" - "+AppConfig.APP_NAME
