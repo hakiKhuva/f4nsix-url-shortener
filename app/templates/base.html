@@ -32,7 +32,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;800;900&family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{url_for('static', filename='script.js')}}"></script>
-    {% if app_debug is not true %}
+    {% if app_debug is not true and CLARITY_ID != None %}
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
