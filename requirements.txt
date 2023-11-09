@@ -50,7 +50,7 @@ urllib3==2.0.7
 URLObject==2.4.3
 user-agents==2.2.0
 validators==0.20.0
-Werkzeug==2.3.6
+Werkzeug==3.0.1
 WTForms==3.0.1
 xxhash==3.2.0
 zipp==3.16.2
