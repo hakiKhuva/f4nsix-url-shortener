@@ -9,7 +9,7 @@ decorator==5.1.1
 dnspython==2.4.0
 email-validator==2.0.0.post2
 exceptiongroup==1.1.2
-Flask==3.0.0
+Flask==2.3.3
 Flask-Cors==4.0.0
 flask-dance==7.0.0
 Flask-Migrate==4.0.4
