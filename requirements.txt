@@ -9,7 +9,7 @@ decorator==5.1.1
 dnspython==2.4.0
 email-validator==2.0.0.post2
 exceptiongroup==1.1.2
-Flask==2.3.3
+Flask==3.0.0
 Flask-Cors==4.0.0
 flask-dance==7.0.0
 Flask-Migrate==4.0.4
@@ -50,7 +50,7 @@ urllib3==2.0.7
 URLObject==2.4.3
 user-agents==2.2.0
 validators==0.20.0
-Werkzeug==2.3.7
+Werkzeug==3.0.1
 WTForms==3.0.1
 xxhash==3.2.0
 zipp==3.16.2
