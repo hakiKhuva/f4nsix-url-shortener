@@ -307,6 +307,7 @@ button.btn:focus, button.btn:hover {
 .table1 th {
     padding: 15px;
     text-align: left;
+    white-space: pre;
 }
 
 footer {

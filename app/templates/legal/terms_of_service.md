@@ -12,7 +12,6 @@ Shorten URL will be deleted permanently
 
 * If any user reports or redirect to the abusive/disrespectful URL.
 * If any spam
-* Receive no click in last 15 days.
 
 {{app_name}} limit the user requests as it may use more resources. The user is temporarily blocked when exceeding limits.
 

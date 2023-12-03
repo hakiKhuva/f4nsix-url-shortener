@@ -46,12 +46,21 @@
                 <th>Shorten URL</th>
                 <th>Destination</th>
                 <th>Tracking ID</th>
+                <th>QRCode</th>
             </tr>
             {% for url in shorten_urls %}
             <tr>
                 <td><a href='{{url["from"]}}' target="_blank">{{url["from"]}}</a></td>
                 <td><a href='{{url["to"]}}' target="_blank">{{url["to"]}}</a></td>
                 <td><a href="{{url_for('Track.index', id=url['tracking_id'])}}">{{url["tracking_id"]}}</a></td>
+                <td><a href="{{url_for('Home.qr_code_generator_for_url', tracking_id=url['tracking_id'])}}" style="display: flex; align-items: center;">
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g id="Interface / Download">
+                        <path id="Vector" d="M6 21H18M12 3V17M12 17L17 12M12 17L7 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                    </svg>
+                    <span>Download</span>
+                </a></td>
             </tr>
             {% endfor %}
         </tbody>
