@@ -1,3 +1,5 @@
+***This project is no longer maintained***
+
 # F4NSIX URL Shortener
 
 URL shortener is a tool that used to generate shorten URL from long URL.
@@ -58,7 +60,3 @@ CLARITY_ID
 ```
 flask run
 ```
-
-You can view this web app live [f4nsix.xyz](https://www.f4nsix.xyz)
-
-This web can easily be deployed on [Vercel](https://vercel.com/).
